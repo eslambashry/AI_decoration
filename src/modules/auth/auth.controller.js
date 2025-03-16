@@ -183,14 +183,16 @@ export const resetPassword = async(req,res,next) => {
 }
 
 export const getAllUser = async(req,res,next) => {
-    const users = await userModel.find()
-
+    const users = await userModel.find().populate(`paymentHistory`)
+    // TODO users.paymentHistory.planId
     res.status(201).json({message:"Users",users})
 }
 
-//======================loginWithGmail============================
 
+
+// ! ======================loginWithGmail============================
 export const loginWithGmail = async (req, res, next) => {
+
     const client = new OAuth2Client()
     const { idToken } = req.body
     async function verify() {
@@ -263,4 +265,27 @@ export const loginWithGmail = async (req, res, next) => {
     res.status(200).json({ message: 'Verified', newUser })
   }
   
+  
+  export const getPaymentHistory = catchError(async (req, res) => {
+    const userId = req.user._id
+    const user = await userModel.findById(userId).populate('paymentHistory')
+    return res.status(200).json({ paymentHistory: user.paymentHistory })
+  })
+  
+  export const getPaymentDetails = catchError( async (req, res) => {
+    const { transactionId } = req.params
+    const userId = req.user._id
+    
+    const user = await userModel.findOne({
+      _id: userId,
+      'paymentHistory.transactionId': transactionId
+    })
+    
+    const payment = user.paymentHistory.find(p => p.transactionId === transactionId)
+    return res.status(200).json({ payment })
+  })
+  
+
+
+
   

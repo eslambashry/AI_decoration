@@ -1,12 +1,12 @@
 import multer from 'multer'
-import { allowedExtensions } from '../utilities/allowedEtentions.js'
+import { allowedExtensions } from '../utilities/allowedExtentions.js';
 
 export const multerCloudFunction = (allowedExtensionsArr) => {
   if (!allowedExtensionsArr) {
     allowedExtensionsArr = allowedExtensions.Image
   }
   //================================== Storage =============================
-  const storage = multer.diskStorage({})
+  const storage = multer.memoryStorage();  // Use memory storage to handle file buffer directly
 
   //================================== File Filter =============================
   const fileFilter = function (req, file, cb) {

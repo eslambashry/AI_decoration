@@ -20,10 +20,14 @@ export const isAuth = (roles) => {
           token: splitedToken,
           signature: process.env.SIGN_IN_TOKEN_SECRET, // ! process.env.SIGN_IN_TOKEN_SECRET STITCH
         })
+        // console.log("decodedData: ",decodedData);
+        // console.log("decodedData: ",decodedData._id);
+        
         const findUser = await userModel.findById(
           decodedData._id,
           'email userName role',
         )
+        
         if (!findUser) {
           return next(new Error('Please SignUp', { cause: 400 }))
         }

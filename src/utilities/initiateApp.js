@@ -6,7 +6,8 @@ import * as routers from '../modules/index.routes.js'
 import cors from 'cors'
 export const initiateApp = (app, express) => {
     const port = process.env.PORT 
-    app.use(cors())
+    
+app.use(cors())
 
 app.use(express.json())
 DB_connection()
@@ -14,6 +15,8 @@ DB_connection()
 app.get('/', (req,res)=>res.send('Backend Running successfully 🍌'))  
 
 app.use('/auth',routers.authRouters)
+app.use('/payment',routers.paymentRoutes)
+app.use('/decoration',routers.decorationRoutes)
 app.use('/blog',blogRouter)
 app.use('/contact',contactRouter)
 
