@@ -14,13 +14,13 @@ export async function sendEmailService({
     service: 'gmail', // optional
     auth: {
       // credentials
-      user: 'eslamhussin600@gmail.com',
-      pass: 'rkew ivbu xytk cvng',
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
     },
   })
 
   const emailInfo = await transporter.sendMail({
-    from: '"3amo samy 👻" <eslamhussin600@gmail.com>',
+    from: `"Home Design 🏡" <${process.env.SMTP_USER}>`,
     to: to ? to : '',
     subject: subject ? subject : 'Hello',
     html: message ? message : '',

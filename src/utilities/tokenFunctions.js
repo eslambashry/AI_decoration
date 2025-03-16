@@ -16,13 +16,17 @@ export const generateToken = ({
 
 // =========================  Verify ==============================
 export const verifyToken = ({
+  
   token = '',
   signature = process.env.DEFAULT_SIGNATURE, // ! process.env.DEFAULT_SIGNATURE
 } = {}) => {
+
   // check if the payload is empty object
   if (!token) {
     return false
   }
+  
   const data = jwt.verify(token, signature)
+  
   return data
 }

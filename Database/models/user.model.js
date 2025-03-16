@@ -1,6 +1,6 @@
 import { Schema,model } from "mongoose"
 import pkg from 'bcrypt'
-import { systemRoles } from "../../src/utilities/systemRole.js"
+// import { systemRoles } from "../../src/utilities/systemRole.js"
 
 const userSchema = new Schema({
 
@@ -25,7 +25,7 @@ const userSchema = new Schema({
     role:{
         type:String,
         default:'user',
-        enum:[systemRoles.USER,systemRoles.ADMIN,systemRoles.SUPER_ADMIN]
+        enum:["user","admin","superAdmin"],
     },
     phoneNumber:{
         type:String,
@@ -51,8 +51,17 @@ const userSchema = new Schema({
     provider: {
         type: String,
         default: 'System',
-        enum: ['System', 'GOOGLE', 'facebook'],
+        enum: ['System', 'GOOGLE'],
     },
+    paymentHistory: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Payment'
+      }],
+      
+      totalDesignsAvailable: {
+        type: Number,
+        default: 0
+      },
     age:Number,
     token:String,
     forgetCode:String,
