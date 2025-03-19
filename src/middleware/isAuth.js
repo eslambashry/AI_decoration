@@ -12,9 +12,11 @@ export const isAuth = (roles) => {
       // if (!authorization.startsWith('ecomm__')) {
       //   return next(new Error('invalid token prefix', { cause: 400 }))
       // }
-
+      // console.log(authorization);
+      
       const splitedToken = authorization.split(' ')[1]
-
+      // console.log(splitedToken);
+      
       try {
         const decodedData = verifyToken({
           token: splitedToken,

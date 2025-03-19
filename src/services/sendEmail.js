@@ -6,7 +6,7 @@ export async function sendEmailService({
   message,
   attachments = [],
 } = {}) {
-  // configurations
+  // configurations  
   const transporter = nodemailer.createTransport({
     host: 'localhost', // stmp.gmail.com
     port: 587, // 587 , 465
@@ -20,7 +20,7 @@ export async function sendEmailService({
   })
 
   const emailInfo = await transporter.sendMail({
-    from: `"Home Design 🏡" <${process.env.SMTP_USER}>`,
+    from: `"Home Designs 🏡"`,
     to: to ? to : '',
     subject: subject ? subject : 'Hello',
     html: message ? message : '',

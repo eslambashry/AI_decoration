@@ -113,7 +113,6 @@ export const handlePaymentSuccess = catchError(async (req, res, next) => {
   }
 
   user.totalDesignsAvailable += planDetails.maxDesigns;
-  
   // Create a new Payment document instead of embedding it
   const payment = new Payment({
     userId: user._id,
@@ -128,6 +127,10 @@ export const handlePaymentSuccess = catchError(async (req, res, next) => {
   // Save the payment document
   await payment.save();
   
+
+  // Add the new payment to the paymentHistory array in the User document
+  user.paymentHistory.push(payment._id);
+
   // Update the user document
   await user.save();
 
@@ -191,18 +194,5 @@ export const handlePaymentCancel = catchError(async (req, res, next) => {
   return res.status(200).json({
     success: false,
     message: 'Payment was cancelled'
-  });
-});
-
-export const getUserPaymentHistory = catchError(async (req, res, next) => {
-  const user = await userModel.findById(req.authUser._id);
-  
-  if (!user) {
-    return next(new CustomError('User not found', 404));
-  }
-
-  return res.status(200).json({
-    success: true,
-    paymentHistory: user.paymentHistory || []
   });
 });

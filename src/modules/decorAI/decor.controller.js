@@ -195,4 +195,13 @@ export const createwithoutImage = catchError(async (req,res,next) => {
     });
 })
 
+export const getDesignById = catchError(async (req, res, next) => {
+  const userId = req.authUser._id;
+  if(!userId) return next(new CustomError('User not found', 404));
+  const designs = await DesignModel.find({ userId: userId }).sort({ createdAt: -1 });
+  if(!designs) return next(new CustomError('No designs found', 404));
+  res.status(200).json({ designs });
+})
+
+
 
