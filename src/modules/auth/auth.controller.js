@@ -28,7 +28,7 @@ export const signup = async(req,res,next) => {
         email,
     },
     signature: process.env.CONFIRMATION_EMAIL_TOKEN, // ! CONFIRMATION_EMAIL_TOKEN
-    expiresIn: '1h',
+    // expiresIn: '1h',
  })
     const confirmationLink = `${req.protocol}://${req.headers.host}/auth/confirm/${token}`
     const isEmailSent = sendEmailService({
@@ -103,7 +103,7 @@ export const login = catchError(async(req,res,next) => {
             role: userExsist.role
         },
         signature: process.env.SIGN_IN_TOKEN_SECRET, // ! process.env.SIGN_IN_TOKEN_SECRET
-        expiresIn: '1h',
+        // expiresIn: '1h',
      })
      
 
@@ -130,28 +130,30 @@ export const forgetPassword = async(req,res,next) => {
     }
 
     const code = nanoid()
-    const hashcode = pkg.hashSync(code, process.env.SALT_ROUNDS) // ! process.env.SALT_ROUNDS
+    const hashcode = pkg.hashSync(code, +process.env.SALT_ROUNDS) // ! process.env.SALT_ROUNDS
     const token = generateToken({
         payload:{
             email,
             sendCode:hashcode,
         },
         signature: process.env.RESET_TOKEN, // ! process.env.RESET_TOKEN
-        expiresIn: '1h',
+        // expiresIn: '1h',
     })
     const resetPasswordLink = `${req.protocol}://${req.headers.host}/auth/reset/${token}`
-    const isEmailSent = sendEmailService({
-        to:email,
-        subject: "Reset Password",
-        message: emailTemplate({
-            link:resetPasswordLink,
-            linkData:"Click Here Reset Password",
-            subject: "Reset Password",
-        }),
-    })
-    if(!isEmailSent){
-        return res.status(400).json({message:"Email not found"})
-    }
+    console.log(resetPasswordLink);
+    
+    // const isEmailSent = sendEmailService({
+    //     to:email,
+    //     subject: "Reset Password",
+    //     message: emailTemplate({
+    //         link:resetPasswordLink,
+    //         linkData:"Click Here Reset Password",
+    //         subject: "Reset Password",
+    //     }),
+    // })
+    // if(!isEmailSent){
+    //     return res.status(400).json({message:"Email not found"})
+    // }
 
     const userupdete = await userModel.findOneAndUpdate(
         {email},
@@ -223,7 +225,7 @@ export const loginWithGmail = async (req, res, next) => {
           role: user.role,
         },
         signature: process.env.SIGN_IN_TOKEN_SECRET,
-        expiresIn: '1h',
+        // expiresIn: '1h',
       })
   
       const userUpdated = await userModel.findOneAndUpdate(
@@ -257,7 +259,7 @@ export const loginWithGmail = async (req, res, next) => {
         role: newUser.role,
       },
       signature: process.env.SIGN_IN_TOKEN_SECRET,
-      expiresIn: '1h',
+      // expiresIn: '1h',
     })
     newUser.token = token
     newUser.status = 'online'
@@ -266,25 +268,45 @@ export const loginWithGmail = async (req, res, next) => {
   }
   
   
-  export const getPaymentHistory = catchError(async (req, res) => {
-    const userId = req.user._id
+  export const getPaymentHistory = catchError(async (req, res,next) => {
+    const userId = req.authUser._id
     const user = await userModel.findById(userId).populate('paymentHistory')
     return res.status(200).json({ paymentHistory: user.paymentHistory })
   })
   
-  export const getPaymentDetails = catchError( async (req, res) => {
+  export const getPaymentDetails = catchError( async (req, res,next) => {
     const { transactionId } = req.params
-    const userId = req.user._id
-    
-    const user = await userModel.findOne({
+    const userId = req.authUser._id
+
+    const userPaymentData = await userModel.findOne({
       _id: userId,
-      'paymentHistory.transactionId': transactionId
-    })
+    }).populate('paymentHistory')
     
-    const payment = user.paymentHistory.find(p => p.transactionId === transactionId)
-    return res.status(200).json({ payment })
+    const payment = userPaymentData.paymentHistory.find(p => p.transactionId === transactionId);
+
+    if (payment) {
+      return res.status(200).json({ payment });
+    }
+
+    return res.status(404).json({ message: 'payment not found' })
   })
-  
+
+
+
+
+// ! =================================== for dashboard =================================
+
+export const getUsers = catchError(async (req, res,next) => {
+
+  const user = await userModel.find()
+  .select(`email username phoneNumber totalDesignsAvailable status`)
+  .populate({
+    path: 'paymentHistory',
+    select: 'planId designsCount createdAt transactionId amount status',
+  })
+
+  return res.status(200).json({ message:"Users:" , user })
+})
 
 
 

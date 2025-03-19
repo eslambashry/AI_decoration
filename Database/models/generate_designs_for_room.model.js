@@ -106,3 +106,69 @@ export const DesignModel = mongoose.model('Design', designSchema);
 // SPECIALITY_DECOR_5	Spring Season Decor
 // SPECIALITY_DECOR_6	Summer Season Decor
 // SPECIALITY_DECOR_7	Winter Season Decor
+
+// scale_factor	
+// integer (ScaleFactor) [ 1 .. 8 ]
+// Scale factor determines the image resolution. See the table below for more details:
+
+// Scale Factor	Image Dimensions (max)	Design Credits Used
+// 1	Max 768 pixels	0 credits
+// 2	Max 1536 pixels	0 credits
+// 3	Max 2304 pixels	1 credit
+// 4	Max 3072 pixels	1 credit
+// 5	Max 3840 pixels	2 credits
+// 6	Max 4608 pixels	2 credits
+// 7	Max 5376 pixels	3 credits
+// 8	Max 6144 pixels	3 credits
+
+
+// prompt	
+// string
+// (Optional) Custom prompt for image generation. If provided, room_type, design_style, color_scheme, and speciality_decor values are ignored as the prompt field is used directly for image generation. If prompt is not provided, then room_type and design_style must be provided and will be used to generate a system-selected prompt. During image generation, the API concatenates prompts as follows: final_prompt = [prompt_prefix] + " " + [prompt] + " " + [prompt_suffix] This final_prompt along with negative_prompt guides the stable diffusion image generation process. Note: Using custom prompts provides more control over image generation but may require experimentation to achieve desired results.
+
+// prompt_prefix	
+// string
+// (Optional) Prefix to identify visual attributes of desired references (e.g., "Houzz style", "Pinterest inspiration", "architectural photography"). Default is system selected. Note: Custom prefix can help target specific visual styles but may require experimentation.
+
+// prompt_suffix	
+// string
+// (Optional) Suffix to identify photo attributes (e.g., "4K resolution", "interior design magazine quality", "professional lighting"). Default is system selected. Note: Custom suffix can help enhance image quality but may require experimentation.
+
+// negative_prompt	
+// string
+// (Optional) Attributes to exclude from generation (e.g., "blurry", "low quality", "distorted", "unrealistic", "broken furniture"). Default is system selected. Note: Custom negative prompts can help avoid unwanted elements but may require experimentation.
+
+// seed	
+// integer >= 0
+// (Optional) Seed for reproducible results. Using the same seed with identical parameters will generate similar images. Default is random. Note: Useful for consistency across generations but results may still vary slightly.
+
+// guidance_scale	
+// number <float> [ 1 .. 20 ]
+// Default: 15
+// (Optional) Controls how closely the model follows the prompt. Higher values result in images that more strictly follow the prompt but may be less natural. Lower values allow more creative freedom but may deviate from the prompt. Default is 15. Note: Finding the right balance requires experimentation.
+
+// num_inference_steps	
+// integer [ 1 .. 75 ]
+// Default: 50
+// (Optional) Number of denoising steps. Higher values can produce better quality images but take longer to generate. Lower values are faster but may reduce quality. Default is 50. Note: Balance between quality and generation time requires experimentation.
+
+
+
+
+// {
+//   "input_image_url": "https://example.com/image.jpg",
+//   "room_type": "livingroom",
+//   "design_style": "modern",
+//   "num_images": 1,
+//   "scale_factor": 3,
+//   "color_scheme": "COLOR_SCHEME_0",
+//   "speciality_decor": "SPECIALITY_DECOR_0",
+//   "mask_info": "room_edges, windows highlighted",
+//   "prompt": "A modern living room with clean lines, large windows, and minimalistic furniture. Soft lighting and neutral tones.",
+//   "prompt_prefix": "Houzz style",
+//   "prompt_suffix": "interior design magazine quality",
+//   "negative_prompt": "blurry, low quality, distorted",
+//   "seed": 42,
+//   "guidance_scale": 15,
+//   "num_inference_steps": 50
+// }
