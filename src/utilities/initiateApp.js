@@ -4,9 +4,10 @@ import blogRouter from '../modules/blog/blog.router.js'
 import contactRouter from '../modules/contactUs/contactUs.router.js'
 import * as routers from '../modules/index.routes.js'
 import cors from 'cors'
+
 export const initiateApp = (app, express) => {
     const port = process.env.PORT 
-    
+
 app.use(cors())
 
 app.use(express.json())
