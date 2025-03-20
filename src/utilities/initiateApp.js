@@ -14,67 +14,82 @@ app.use(express.json())
 DB_connection()
 
 app.get('/', (req,res)=>res.send(
-    `
-   <!DOCTYPE html>
+`
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome Page</title>
     <style>
+        /* Overall Body Style */
         body {
-            background-color: black;
-            color: white;
-            font-family: Arial, sans-serif;
-            text-align: center;
+            background-color: #121212; /* Dark background */
+            color: #E0E0E0; /* Light grey text for readability */
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
+            text-align: center;
         }
 
+        /* Main Heading Style */
         h1 {
-            color: #FFD700; /* Gold color */
-            font-size: 3em;
-            margin-top: 50px;
+            color: #4CAF50; /* Green */
+            font-size: 3.5em;
+            margin-top: 40px;
         }
 
+        /* Subheading Style */
         h2 {
-            color: #32CD32; /* LimeGreen color */
-            font-size: 2.5em;
-            margin-top: 30px;
-        }
-
-        h3 {
-            color: #FF4500; /* OrangeRed color */
-            font-size: 2em;
+            color: #A5D6A7; /* Lighter green */
+            font-size: 2.2em;
             margin-top: 20px;
         }
 
+        /* Routes Section */
+        h3 {
+            color: #81C784; /* Soft green */
+            font-size: 2em;
+            margin-top: 30px;
+        }
+
         .route-list {
-            color: #ADD8E6; /* LightBlue color */
-            font-size: 1.2em;
+            font-size: 1.1em;
+            color: #B0BEC5; /* Light blue-grey */
+            line-height: 1.8;
+            margin-bottom: 40px;
+        }
+
+        /* Route Item Styling */
+        .route-item {
             margin: 10px 0;
         }
 
-        .route-list br {
-            margin-bottom: 10px;
-        }
-
-        .route-item {
-            color: #FFFF00; /* Yellow color */
-        }
-
-        .route-item span {
-            color: #00FFFF; /* Cyan color */
-        }
-
+        /* Clickable GET Routes */
         .route-item a {
+            color: #64B5F6; /* Soft blue for links */
             text-decoration: none;
-            color: #FFD700; /* Gold color */
             font-weight: bold;
         }
 
         .route-item a:hover {
-            color: #FF6347; /* Tomato color */
+            color: #0288D1; /* Darker blue on hover */
+        }
+
+        /* Styling for GET routes to indicate they're clickable */
+        .route-item.get-route {
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        /* Clickable Route Hover Effect */
+        .route-item.get-route:hover {
+            color: #0288D1;
+        }
+
+        /* Route Item with URL Styling */
+        .route-item span {
+            color: #FFEB3B; /* Yellow for POST and PUT methods */
         }
     </style>
 </head>
@@ -88,34 +103,34 @@ app.get('/', (req,res)=>res.send(
         <div class="route-item">signUp => <span>POST</span> => /auth/signUp</div>
         <div class="route-item">login => <span>POST</span> => /auth/login</div>
         <div class="route-item">loginGmail => <span>POST</span> => /auth/loginGmail</div>
-        <div class="route-item">payment-history => <span>GET</span> => /auth/payment-history</div>
-        <div class="route-item">payment-history/:transactionId => <span>GET</span> => /auth/payment-history/:transactionId</div>
-        <div class="route-item">getAllUser => <span>GET</span> => /auth/getAllUser</div>
-        <div class="route-item">confirm/:token => <span>GET</span> => /auth/confirm/:token</div>
+        <div class="route-item get-route"><a href="/auth/payment-history" id="auth-payment-history">payment-history => <span>GET</span> => /auth/payment-history</a></div>
+        <div class="route-item get-route"><a href="/auth/payment-history/:transactionId" id="auth-payment-history-transaction">payment-history/:transactionId => <span>GET</span> => /auth/payment-history/:transactionId</a></div>
+        <div class="route-item get-route"><a href="/auth/getAllUser" id="auth-getAllUser">getAllUser => <span>GET</span> => /auth/getAllUser</a></div>
+        <div class="route-item get-route"><a href="/auth/confirm/:token" id="auth-confirm-token">confirm/:token => <span>GET</span> => /auth/confirm/:token</a></div>
         <div class="route-item">forgetPassword => <span>POST</span> => /auth/forgetPassword</div>
         <div class="route-item">resetPassword/:token => <span>POST</span> => /auth/resetPassword/:token</div>
-        <div class="route-item">getUsers => <span>GET</span> => /auth/getUsers</div>
-        <div class="route-item">getOneUser => <span>GET</span> => /auth/getOneUser/:id</div>
+        <div class="route-item get-route"><a href="/auth/getUsers" id="auth-getUsers">getUsers => <span>GET</span> => /auth/getUsers</a></div>
+        <div class="route-item get-route"><a href="/auth/getOneUser/:id" id="auth-getOneUser">getOneUser => <span>GET</span> => /auth/getOneUser/:id</a></div>
     </div>
 
     <h3>/payment</h3>
     <div class="route-list">
         <div class="route-item">payment => <span>POST</span> => /payment/payment</div>
-        <div class="route-item">payment-history => <span>GET</span> => /payment/payment-history</div>
+        <div class="route-item get-route"><a href="/payment/payment-history" id="payment-history">payment-history => <span>GET</span> => /payment/payment-history</a></div>
     </div>
 
     <h3>/decoration</h3>
     <div class="route-list">
         <div class="route-item">createWithImage => <span>POST</span> => /decoration/createWithImage</div>
         <div class="route-item">createwithoutImage => <span>POST</span> => /decoration/createwithoutImage</div>
-        <div class="route-item">getDesignByUserId => <span>GET</span> => /decoration/getDesignByUserId</div>
+        <div class="route-item get-route"><a href="/decoration/getDesignByUserId" id="decoration-design">getDesignByUserId => <span>GET</span> => /decoration/getDesignByUserId</a></div>
     </div>
 
     <h3>/blog</h3>
     <div class="route-list">
         <div class="route-item">create => <span>POST</span> => /blog/create</div>
-        <div class="route-item">getAll => <span>GET</span> => /blog/getAll</div>
-        <div class="route-item">getOne => <span>GET</span> => /blog/getOne/:id</div>
+        <div class="route-item get-route"><a href="/blog/getAll" id="blog-getAll">getAll => <span>GET</span> => /blog/getAll</a></div>
+        <div class="route-item get-route"><a href="/blog/getOne/:id" id="blog-getOne">getOne => <span>GET</span> => /blog/getOne/:id</a></div>
         <div class="route-item">update => <span>PUT</span> => /blog/update/:id</div>
         <div class="route-item">delete => <span>DELETE</span> => /blog/delete/:id</div>
     </div>
@@ -125,9 +140,19 @@ app.get('/', (req,res)=>res.send(
         <div class="route-item">create => <span>POST</span> => /contact/create</div>
     </div>
 
+    <script>
+        // Example of handling the GET routes (mock action for demonstration)
+        document.querySelectorAll('.get-route a').forEach(route => {
+            route.addEventListener('click', function(event) {
+                event.preventDefault(); // Prevent default link behavior
+            });
+        });
+    </script>
+
 </body>
 </html>
-    `
+
+`
 ))  
 
 app.use('/auth',routers.authRouters)
