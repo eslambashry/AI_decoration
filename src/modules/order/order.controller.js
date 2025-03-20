@@ -1,9 +1,9 @@
 import CustomError from "../../utilities/customError.js";
 import { initializePayment, verifyPayment } from "../../utilities/payment.js";
 import { sendEmailService } from "../../services/sendEmail.js";
-import createInvoice from "../../utilities/pdfKit.js";
 import { emailTemplate } from "../../utilities/emailTemplate.js";
 import catchError from "../../middleware/ErrorHandeling.js";
+import createInvoice from "../../utilities/pdfbody.js";
 import { userModel } from "../../../Database/models/user.model.js";
 import { nanoid } from 'nanoid';
 import { Payment } from "../../../Database/models/payment.model.js";
