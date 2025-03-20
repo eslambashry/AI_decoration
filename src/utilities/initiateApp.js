@@ -21,6 +21,7 @@ app.use('/blog',blogRouter)
 app.use('/contact',contactRouter)
 
 
+
 app.use('*',(req,res,next) => res.status(404).json({message: '404 not found URL'}))
 
 app.use(globalResponse)
