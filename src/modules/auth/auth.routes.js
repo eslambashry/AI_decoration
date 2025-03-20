@@ -1,6 +1,5 @@
 import { Router } from "express";
 import * as authCont from './auth.controller.js'
-import { verifyToken } from "../../utilities/tokenFunctions.js";
 import { isAuth } from "../../middleware/isAuth.js";
 import { systemRoles } from "../../utilities/systemRole.js";
 const router = Router()

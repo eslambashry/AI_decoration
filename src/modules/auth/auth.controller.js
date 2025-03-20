@@ -27,10 +27,10 @@ export const signup = async(req,res,next) => {
     payload:{
         email,
     },
-    signature: process.env.CONFIRMATION_EMAIL_TOKEN, // ! CONFIRMATION_EMAIL_TOKEN
-    // expiresIn: '1h',
+    signature: process.env.CONFIRMATION_EMAIL_TOKEN, 
+    expiresIn: '1h',
  })
-    const confirmationLink = `${req.protocol}://${req.headers.host}/auth/confirm/${token}`
+    const confirmationLink = `${req.protocol}://${req.headers.host}/auth/confirm/${token}` 
     const isEmailSent = sendEmailService({
         to:email,
         subject:'Confirmation Email',
@@ -45,10 +45,13 @@ export const signup = async(req,res,next) => {
     if(!isEmailSent){
         return res.status(400).json({message:'fail to sent confirmation email'})
     }
+
+    const hashedPassword = pkg.hashSync(password, +process.env.SALT_ROUNDS)
+    
     const user = new userModel({
         username,
         email,
-        password,
+        password:hashedPassword,
         age, 
         gender,
         phoneNumber,
@@ -88,10 +91,14 @@ export const login = catchError(async(req,res,next) => {
     const userExsist = await userModel.findOne({email})
     if(!userExsist){
         return next(new CustomError('user not found',404))
-    }
+    } 
 
+    console.log(password);
     
     const passwordExsist = pkg.compareSync(password,userExsist.password)
+    console.log(passwordExsist);
+    console.log(userExsist.password);
+    
     if(!passwordExsist){
         return next(new CustomError('in correct password',404))
     }
@@ -103,7 +110,7 @@ export const login = catchError(async(req,res,next) => {
             role: userExsist.role
         },
         signature: process.env.SIGN_IN_TOKEN_SECRET, // ! process.env.SIGN_IN_TOKEN_SECRET
-        // expiresIn: '1h',
+        expiresIn: '1h',
      })
      
 
@@ -137,23 +144,23 @@ export const forgetPassword = async(req,res,next) => {
             sendCode:hashcode,
         },
         signature: process.env.RESET_TOKEN, // ! process.env.RESET_TOKEN
-        // expiresIn: '1h',
+        expiresIn: '1h',
     })
-    const resetPasswordLink = `${req.protocol}://${req.headers.host}/auth/reset/${token}`
+    const resetPasswordLink = `${req.protocol}://${req.headers.host}/auth/reset/${token}` // ^ front end url 
     console.log(resetPasswordLink);
     
-    // const isEmailSent = sendEmailService({
-    //     to:email,
-    //     subject: "Reset Password",
-    //     message: emailTemplate({
-    //         link:resetPasswordLink,
-    //         linkData:"Click Here Reset Password",
-    //         subject: "Reset Password",
-    //     }),
-    // })
-    // if(!isEmailSent){
-    //     return res.status(400).json({message:"Email not found"})
-    // }
+    const isEmailSent = sendEmailService({
+        to:email,
+        subject: "Reset Password",
+        message: emailTemplate({
+            link:resetPasswordLink,
+            linkData:"Click Here Reset Password",
+            subject: "Reset Password",
+        }),
+    })    
+    if(!isEmailSent){
+        return res.status(400).json({message:"Email not found"})
+    }
 
     const userupdete = await userModel.findOneAndUpdate(
         {email},
@@ -174,10 +181,13 @@ export const resetPassword = async(req,res,next) => {
     if(!user){
         return res.status(400).json({message: "you are alreade reset it , try to login"})
     }
-
+    
     const {newPassword} = req.body
+    console.log(newPassword);
+    
+    const hashedPassword = pkg.hashSync(newPassword, +process.env.SALT_ROUNDS)
 
-    user.password = newPassword,
+    user.password = hashedPassword,
     user.forgetCode = null
 
     const updatedUser = await user.save()
@@ -225,7 +235,7 @@ export const loginWithGmail = async (req, res, next) => {
           role: user.role,
         },
         signature: process.env.SIGN_IN_TOKEN_SECRET,
-        // expiresIn: '1h',
+        expiresIn: '1h',
       })
   
       const userUpdated = await userModel.findOneAndUpdate(
@@ -259,13 +269,13 @@ export const loginWithGmail = async (req, res, next) => {
         role: newUser.role,
       },
       signature: process.env.SIGN_IN_TOKEN_SECRET,
-      // expiresIn: '1h',
+      expiresIn: '1h',
     })
     newUser.token = token
     newUser.status = 'online'
     await newUser.save()
     res.status(200).json({ message: 'Verified', newUser })
-  }
+}
   
   
   export const getPaymentHistory = catchError(async (req, res,next) => {
@@ -307,7 +317,3 @@ export const getUsers = catchError(async (req, res,next) => {
 
   return res.status(200).json({ message:"Users:" , user })
 })
-
-
-
-  

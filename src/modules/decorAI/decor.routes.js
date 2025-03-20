@@ -11,6 +11,6 @@ const router = Router()
 
 router.post('/createWithImage', isAuth([systemRoles.ADMIN, systemRoles.USER]), multerCloudFunction(allowedExtensions.Image).single('image'), decorationCon.createWithImage)
 router.post('/createwithoutImage', isAuth([systemRoles.ADMIN, systemRoles.USER]), decorationCon.createwithoutImage)
-router.get('/getDesignById', isAuth([systemRoles.USER]), decorationCon.getDesignById)
+router.get('/getDesignByUserId', isAuth([systemRoles.USER]), decorationCon.getDesignById)
 // router.get('/getDesigns', decorationCon.getDesigns)
 export default router
