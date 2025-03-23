@@ -7,3 +7,5 @@ import {initiateApp} from './src/utilities/initiateApp.js'
 const app = express()
 initiateApp(app,express)
 
+// TODO STRIPE CURRENCY -> USD - SAR - AED    (✔️)
+// TODO Blogs AR,EN          hosni            (✔️)

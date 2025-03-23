@@ -14,6 +14,7 @@ app.use(express.json())
 DB_connection()
 
 app.get('/', (req,res)=>res.send(
+
 `
 <!DOCTYPE html>
 <html lang="en">
@@ -129,7 +130,7 @@ app.get('/', (req,res)=>res.send(
     <h3>/blog</h3>
     <div class="route-list">
         <div class="route-item">create => <span>POST</span> => /blog/create</div>
-        <div class="route-item get-route"><a href="/blog/getAll" id="blog-getAll">getAll => <span>GET</span> => /blog/getAll</a></div>
+        <div class="route-item get-route"><a href="/blog/getallblogs" id="blog-getAll">getallblogs => <span>GET</span> => /blog/getallblogs</a></div>
         <div class="route-item get-route"><a href="/blog/getOne/:id" id="blog-getOne">getOne => <span>GET</span> => /blog/getOne/:id</a></div>
         <div class="route-item">update => <span>PUT</span> => /blog/update/:id</div>
         <div class="route-item">delete => <span>DELETE</span> => /blog/delete/:id</div>
@@ -151,8 +152,8 @@ app.get('/', (req,res)=>res.send(
 
 </body>
 </html>
-
 `
+
 ))  
 
 app.use('/auth',routers.authRouters)

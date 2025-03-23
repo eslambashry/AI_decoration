@@ -29,7 +29,7 @@ const addBlog = async (req, res, next) => {
       },
      });
     blog.save();
-    res.status(201).json({ message: "Blog added successfully" });
+    res.status(201).json({ message: "Blog added successfully" ,blog});
 };
 
 const getAllBlogs = async (req, res, next) => {
