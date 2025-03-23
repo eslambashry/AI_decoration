@@ -9,35 +9,72 @@ import { nanoid } from 'nanoid';
 import { Payment } from "../../../Database/models/payment.model.js";
 
 import fs from 'fs';
-import path from 'path';
 
 export const paymentPlans = {
   PLAN_1: {
-    name: '20 Design Package',
-    maxDesigns: 20,
-    amount: 9.99,
-    description: 'Pay per design (Max 20 designs)'
+    name: 'Trial - تجربة',
+    maxDesigns: 5, // 3 designs + 2 designs free
+    prices: {
+      USD: 9.06,
+      SAR: 34.00, // Approximate conversion
+      AED: 33.30  // Approximate conversion
+    },
+    costPerDesign: 1.81,
+    description: '3 designs + 2 designs free',
+    features: [
+      'Access to all rooms and styles (No color)',
+      '3 months storage',
+      'Download high quality'
+    ],
+    storageMonths: 3
   },
   PLAN_2: {
-    name: '50 Designs Package',
-    maxDesigns: 50,
-    amount: 199,
-    description: '50 Designs Bundle'
+    name: 'Basic - الباقة الاساسية',
+    maxDesigns: 30, // 25 designs + 5 designs free
+    prices: {
+      USD: 26.66,
+      SAR: 100.00, // Approximate conversion
+      AED: 98.00   // Approximate conversion
+    },
+    costPerDesign: 0.89,
+    description: '25 designs + 5 designs free',
+    features: [
+      'Access to all rooms and styles',
+      '6 months storage',
+      'Download high quality'
+    ],
+    storageMonths: 6
   },
   PLAN_3: {
-    name: '100 Designs Package',
-    maxDesigns: 100,
-    amount: 299,
-    description: '100 Designs Bundle'
+    name: 'Pro - باقة برو',
+    maxDesigns: 50, // 40 designs + 10 designs free
+    prices: {
+      USD: 37.33,
+      SAR: 140.00, // Approximate conversion
+      AED: 137.00  // Approximate conversion
+    },
+    costPerDesign: 0.75,
+    description: '40 designs + 10 designs free',
+    features: [
+      'Access to all rooms and styles',
+      '6 months storage',
+      'Download high quality'
+    ],
+    storageMonths: 6
   }
 };
 
 export const processPayment = catchError(async (req, res, next) => {
-  const { planId } = req.body;
+  const { planId, currency = 'USD' } = req.body;
   const planDetails = paymentPlans[planId];
   
   if (!planDetails) {
     return next(new CustomError('Invalid plan ID', 400));
+  }
+
+  // Validate currency
+  if (!['USD', 'SAR', 'AED'].includes(currency)) {
+    return next(new CustomError('Invalid currency. Supported currencies: USD, SAR, AED', 400));
   }
 
   // Ensure directory exists
@@ -52,16 +89,19 @@ export const processPayment = catchError(async (req, res, next) => {
 
   const orderCode = `${user.username}_${nanoid(3)}`
   
+  // Get price for selected currency
+  const amount = planDetails.prices[currency];
+  
   // Create line items for Stripe
   const line_items = [
     {
       price_data: {
-        currency: 'SAR',
+        currency: currency,
         product_data: {
           name: planDetails.name,
           description: planDetails.description,
         },
-        unit_amount: Math.round(planDetails.amount * 100), // Convert to cents
+        unit_amount: Math.round(amount * 100), // Convert to cents
       },
       quantity: 1,
     },
@@ -77,6 +117,7 @@ export const processPayment = catchError(async (req, res, next) => {
       userId: user._id.toString(),
       planId,
       orderCode,
+      currency
     },
     success_url: `${baseUrl}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${baseUrl}/payment/cancel`,
@@ -88,6 +129,8 @@ export const processPayment = catchError(async (req, res, next) => {
     paymentSession 
   });
 });
+
+
 
 export const handlePaymentSuccess = catchError(async (req, res, next) => {
   const { session_id } = req.query;
@@ -103,7 +146,7 @@ export const handlePaymentSuccess = catchError(async (req, res, next) => {
     return next(new CustomError('Payment verification failed', 400));
   }
 
-  const { userId, planId, orderCode } = session.metadata;
+  const { userId, planId, orderCode, currency = 'USD' } = session.metadata;
   const planDetails = paymentPlans[planId];
 
   // Update user's available designs
@@ -113,11 +156,13 @@ export const handlePaymentSuccess = catchError(async (req, res, next) => {
   }
 
   user.totalDesignsAvailable += planDetails.maxDesigns;
-  // Create a new Payment document instead of embedding it
+  
+  // Create a new Payment document
   const payment = new Payment({
     userId: user._id,
     planId,
-    amount: planDetails.amount,
+    currency,
+    amount: planDetails.prices[currency],
     transactionId: session_id,
     paymentMethod: 'stripe',
     status: 'completed',
@@ -127,7 +172,6 @@ export const handlePaymentSuccess = catchError(async (req, res, next) => {
   // Save the payment document
   await payment.save();
   
-
   // Add the new payment to the paymentHistory array in the User document
   user.paymentHistory.push(payment._id);
 
@@ -148,16 +192,16 @@ export const handlePaymentSuccess = catchError(async (req, res, next) => {
     items: [
       {
         title: planDetails.name,
-        price: planDetails.amount,
+        price: planDetails.prices[currency],
         quantity: 1,
-        finalPrice: planDetails.amount
+        finalPrice: planDetails.prices[currency]
       }
     ],
-    subTotal: planDetails.amount,
-    paidAmount: planDetails.amount
+    subTotal: planDetails.prices[currency],
+    paidAmount: planDetails.prices[currency],
+    currency
   };
 
-  
   const invoicePath = createInvoice(invoiceData, `${orderCode}_invoice.pdf`);
   
   // Send email with invoice
