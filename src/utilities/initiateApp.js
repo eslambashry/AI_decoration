@@ -112,7 +112,8 @@ app.get('/', (req,res)=>res.send(
         <div class="route-item">resetPassword/:token => <span>POST</span> => /auth/resetPassword/:token</div>
         <div class="route-item get-route"><a href="/auth/getUsers" id="auth-getUsers">getUsers => <span>GET</span> => /auth/getUsers</a></div>
         <div class="route-item get-route"><a href="/auth/getOneUser/:id" id="auth-getOneUser">getOneUser => <span>GET</span> => /auth/getOneUser/:id</a></div>
-    </div>
+        <div class="route-item">logOut => <span>POST</span> => /auth/logout</div>
+        </div>
 
     <h3>/payment</h3>
     <div class="route-list">
@@ -131,6 +132,8 @@ app.get('/', (req,res)=>res.send(
     <div class="route-list">
         <div class="route-item">create => <span>POST</span> => /blog/create</div>
         <div class="route-item get-route"><a href="/blog/getallblogs" id="blog-getAll">getallblogs => <span>GET</span> => /blog/getallblogs</a></div>
+        <div class="route-item get-route"><a href="/blog/getarblogs" id="blog-getAll">get arabic blogs/ => <span>GET</span> => /blog/getarblogs</a></div>
+        <div class="route-item get-route"><a href="/blog/getenblogs" id="blog-getAll">get english blogs/ => <span>GET</span> => /blog/getenblogs</a></div>
         <div class="route-item get-route"><a href="/blog/getOne/:id" id="blog-getOne">getOne => <span>GET</span> => /blog/getOne/:id</a></div>
         <div class="route-item">update => <span>PUT</span> => /blog/update/:id</div>
         <div class="route-item">delete => <span>DELETE</span> => /blog/delete/:id</div>

@@ -6,6 +6,7 @@ const router = Router()
 
 router.post('/signUp',authCont.signup)
 router.post('/login',authCont.login)
+router.post('/logout',authCont.logout)
 router.post('/loginGmail',authCont.loginWithGmail)
 router.get('/payment-history', isAuth([systemRoles.USER]), authCont.getPaymentHistory)
 router.get('/payment-history/:transactionId', isAuth([systemRoles.USER]), authCont.getPaymentDetails)

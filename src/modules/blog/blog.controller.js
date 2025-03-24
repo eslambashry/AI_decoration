@@ -7,7 +7,13 @@ import imagekit, {
 import CustomError from "../../utilities/customError.js";
 
 const addBlog = async (req, res, next) => {
+
   const { title, content, caption } = req.body;
+
+  if (!title?.en || !title?.ar || !content?.en || !content?.ar || !caption?.en || !caption?.ar) {
+    return next(new CustomError("All blog fields are required in both English and Arabic", 400));
+  }
+
   if (!req.file) {
     return next(new CustomError("Please upload an image.", 400));
   }
@@ -23,7 +29,11 @@ const addBlog = async (req, res, next) => {
     return next(new CustomError("Image upload failed. Please try again.", 500));
   }
 
-    const blog = new Blog({ title, content, caption,customId, 
+    const blog = new Blog({ 
+      title,
+      content,
+      caption,
+      customId, 
       image: {
         secure_url: uploadResult.url,
         public_id: uploadResult.fileId,
@@ -76,16 +86,33 @@ const getBlog = async (req, res, next) => {
 };
 
 const updateBlog = async (req, res, next) => {
-  // console.log();
 
-  const blog = await Blog.findById(req.params.id);
+  const blogId = req.params.id;
+  const { title, content, caption } = req.body;
+
+  const blog = await Blog.findById(blogId);
   if (!blog) {
     return res.status(404).json({ message: "Blog not found" });
   }
 
-  if (req.body.title) blog.title = req.body.title;
-  if (req.body.content) blog.content = req.body.content;
-  if (req.body.caption) blog.caption = req.body.caption;
+// Update title if provided
+if (title) {
+  // Handle nested updates for each language
+  if (title.en) blog.title.en = title.en;
+  if (title.ar) blog.title.ar = title.ar;
+}
+
+// Update content if provided
+if (content) {
+  if (content.en) blog.content.en = content.en;
+  if (content.ar) blog.content.ar = content.ar;
+}
+
+// Update caption if provided
+if (caption) {
+  if (caption.en) blog.caption.en = caption.en;
+  if (caption.ar) blog.caption.ar = caption.ar;
+}
 
   if (req.file) {
     const uploadResult = await imagekit.upload({
@@ -129,6 +156,16 @@ const deleteBlog = async (req, res, next) => {
   }
 };
 
+
+const getAllBlogs = async (req, res, next) => {
+  try {
+    const blogs = await Blog.find()
+    res.status(200).json({ message: "Success", blogs });
+  } catch (error) {
+    res.status(500).json({ message: "Error", error: error });
+  }
+};
+
 export {
   addBlog,
   getAllArabicBlogs,
@@ -136,4 +173,5 @@ export {
   getBlog,
   updateBlog,
   deleteBlog,
+  getAllBlogs
 };
