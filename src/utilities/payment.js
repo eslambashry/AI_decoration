@@ -1,5 +1,6 @@
 import Stripe from "stripe";
-import { nanoid } from 'nanoid';
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export const initializePayment = async({
     payment_method_types=['card'],
@@ -11,7 +12,6 @@ export const initializePayment = async({
     discounts = [],
     line_items=[]
 }) => {
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
     const paymentData = await stripe.checkout.sessions.create({
         payment_method_types,
@@ -36,3 +36,52 @@ export const verifyPayment = async (sessionId) => {
         session
     };
 };
+
+
+
+
+
+// async function getPaymentData() {
+//   try {
+//     const paymentIntents = await stripe.paymentIntents.list({
+//         limit: 100, // Limit the number
+//     });
+//     console.log(paymentIntents.data.length);
+    
+//     paymentIntents.data.forEach(intent => {
+//       console.log(`Payment ID: ${intent.id}`);
+//       console.log(`Amount: ${intent.amount_received}`);
+//       console.log(`Status: ${intent.status}`);
+      
+//     });
+//   } catch (error) {
+//     console.error('Error retrieving payment data:', error);
+//   }
+// }
+
+// getPaymentData();
+
+
+// async function getPaymentsByDateRange(startDate, endDate) {
+//     try {
+//       const paymentIntents = await stripe.paymentIntents.list({
+//         created: {
+//           gte: Math.floor(startDate / 1000), // Convert to Unix timestamp
+//           lte: Math.floor(endDate / 1000), // Convert to Unix timestamp
+//         },
+//         limit: 10, // Limit the number of results
+//       });
+  
+//       paymentIntents.data.forEach(intent => {
+//         console.log(`Payment ID: ${intent.id}`);
+//         console.log(`Amount: ${intent.amount_received}`);
+//         console.log(`Status: ${intent.status}`);
+//       });
+//     } catch (error) {
+//       console.error('Error retrieving payment data:', error);
+//     }
+//   }
+  
+//   const startDate = new Date('2025-01-01').getTime();
+//   const endDate = new Date('2025-03-01').getTime();
+//   getPaymentsByDateRange(startDate, endDate); 

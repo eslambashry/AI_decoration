@@ -8,6 +8,8 @@ import CustomError from "../../utilities/customError.js"
 import { OAuth2Client } from "google-auth-library"
 import pkg from 'bcrypt'
 
+import jwt from "jsonwebtoken";
+
 export const signup = async(req,res,next) => {
     const { 
         username,
@@ -302,6 +304,53 @@ export const loginWithGmail = async (req, res, next) => {
   })
 
 
+  export const logout = async (req, res, next) => {
+    try {
+      const { token } = req.body;
+      if (!token) {
+        return res.status(400).json({ message: "Token is required" });
+      }
+  
+      let decoded;
+      try {
+        decoded = jwt.verify(token, process.env.SIGN_IN_TOKEN_SECRET);
+      } catch (error) {
+        if (error.name === "TokenExpiredError") {
+          // إذا انتهت صلاحية التوكن، نقوم فقط بفك تشفيره بدون التحقق منه
+          decoded = jwt.decode(token);
+        } else {
+          return res.status(401).json({ message: "Invalid token" });
+        }
+      }
+  
+      if (!decoded || !decoded.email) {
+        return res.status(401).json({ message: "Invalid token" });
+      }
+  
+      const email = decoded.email;
+  
+      // console.log("Decoded email:", email);
+  
+      // البحث عن المستخدم
+      const user = await userModel.findOne({ email });
+  
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+  
+      // تحديث حالة المستخدم إلى "offline" حتى لو كان التوكن منتهي الصلاحية
+      await userModel.findOneAndUpdate(
+        { email },
+        { token: null, status: "offline" },
+        { new: true }
+      );
+  
+      res.status(200).json({ message: "Logout successful" });
+    } catch (error) {
+      console.error("Logout Error:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  };
 
 
 // ! =================================== for dashboard =================================
