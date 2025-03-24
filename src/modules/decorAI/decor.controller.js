@@ -61,13 +61,20 @@ export const createWithImage = catchError(async (req, res, next) => {
     );
     console.log(apiResponse);
 
+    
+    // console.log(generatedImages);
+    
+    if (apiResponse.data && apiResponse.data.error) {
+      // Check if there is an error in the API response
+      return next(new CustomError(apiResponse.data.message || 'AI processing failed. Please try again.', 500));
+    }    
+    
     const generatedImages = apiResponse.data.info.images;
-
-    console.log(generatedImages);
     
     if (!apiResponse.data || !generatedImages || !generatedImages.length) {
       return next(new CustomError('AI processing failed. Please try again.', 500));
     }
+    
 
       // Upload generated images to ImageKit
       const uploadedGeneratedImages = [];

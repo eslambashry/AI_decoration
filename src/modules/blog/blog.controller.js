@@ -23,18 +23,14 @@ const addBlog = async (req, res, next) => {
     return next(new CustomError("Image upload failed. Please try again.", 500));
   }
 
-  const blog = new Blog({
-    title,
-    content,
-    caption,
-    customId,
-    image: {
-      secure_url: uploadResult.url,
-      public_id: uploadResult.fileId,
-    },
-  });
-  blog.save();
-  res.status(201).json({ message: "Blog added successfully" });
+    const blog = new Blog({ title, content, caption,customId, 
+      image: {
+        secure_url: uploadResult.url,
+        public_id: uploadResult.fileId,
+      },
+     });
+    blog.save();
+    res.status(201).json({ message: "Blog added successfully" ,blog});
 };
 
 const getAllArabicBlogs = async (req, res, next) => {
