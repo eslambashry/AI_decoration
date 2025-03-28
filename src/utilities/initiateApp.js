@@ -92,6 +92,15 @@ app.get('/', (req,res)=>res.send(
         .route-item span {
             color: #FFEB3B; /* Yellow for POST and PUT methods */
         }
+        .dashboard{
+        color:red;
+        font-size: 20px;
+        text-decoration: underline;
+        cursor: pointer;
+        }
+        .dashboard:hover{
+        color:blue;
+        }
     </style>
 </head>
 <body>
@@ -110,9 +119,14 @@ app.get('/', (req,res)=>res.send(
         <div class="route-item get-route"><a href="/auth/confirm/:token" id="auth-confirm-token">confirm/:token => <span>GET</span> => /auth/confirm/:token</a></div>
         <div class="route-item">forgetPassword => <span>POST</span> => /auth/forgetPassword</div>
         <div class="route-item">resetPassword/:token => <span>POST</span> => /auth/resetPassword/:token</div>
-        <div class="route-item get-route"><a href="/auth/getUsers" id="auth-getUsers">getUsers => <span>GET</span> => /auth/getUsers</a></div>
         <div class="route-item get-route"><a href="/auth/getOneUser/:id" id="auth-getOneUser">getOneUser => <span>GET</span> => /auth/getOneUser/:id</a></div>
         <div class="route-item">logOut => <span>POST</span> => /auth/logout</div>
+
+        <hr/> 
+        <div class='dashboard'>* Dasboard *</div>
+        <div class="route-item">updateUser/:id => <span>POST</span> => /auth/updateUser/:id</div>
+        <div class="route-item">deleteUser/:id => <span>DELETE</span> => /auth/deleteUser/:id</div>
+        <div class="route-item get-route"><a href="/auth/getUsers" id="auth-getUsers">getUsers => <span>GET</span> => /auth/getUsers</a></div>
         </div>
 
     <h3>/payment</h3>
@@ -144,14 +158,20 @@ app.get('/', (req,res)=>res.send(
         <div class="route-item">create => <span>POST</span> => /contact/create</div>
     </div>
 
-    <script>
-        // Example of handling the GET routes (mock action for demonstration)
-        document.querySelectorAll('.get-route a').forEach(route => {
-            route.addEventListener('click', function(event) {
-                event.preventDefault(); // Prevent default link behavior
-            });
+<script>
+    // Example of handling the GET routes to update the current page route
+    document.querySelectorAll('.get-route a').forEach(route => {
+        route.addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent default link behavior
+            
+            // Construct the full URL by appending the clicked route to 'http://localhost:9090/'
+            const newUrl = '${req.protocol}://${req.headers.host}' + this.getAttribute('href');
+            
+            // Update the browser's location to the new URL
+            window.location.href = newUrl;
         });
-    </script>
+    });
+</script>
 
 </body>
 </html>

@@ -9,6 +9,8 @@ import { OAuth2Client } from "google-auth-library"
 import pkg from 'bcrypt'
 
 import jwt from "jsonwebtoken";
+import { DesignModel } from "../../../Database/models/generate_designs_for_room.model.js"
+import { destroyImage } from "../../utilities/imageKitConfigration.js"
 
 export const signup = async(req,res,next) => {
     const { 
@@ -30,7 +32,7 @@ export const signup = async(req,res,next) => {
         email,
     },
     signature: process.env.CONFIRMATION_EMAIL_TOKEN, 
-    // expiresIn: '1h',
+    expiresIn: '1h',
  })
     const confirmationLink = `${req.protocol}://${req.headers.host}/auth/confirm/${token}` 
     const isEmailSent = sendEmailService({
@@ -112,7 +114,7 @@ export const login = catchError(async(req,res,next) => {
             role: userExsist.role
         },
         signature: process.env.SIGN_IN_TOKEN_SECRET, // ! process.env.SIGN_IN_TOKEN_SECRET
-        // expiresIn: '1h',
+        expiresIn: '1h',
      })
      
 
@@ -146,7 +148,7 @@ export const forgetPassword = async(req,res,next) => {
             sendCode:hashcode,
         },
         signature: process.env.RESET_TOKEN, // ! process.env.RESET_TOKEN
-        // expiresIn: '1h',
+        expiresIn: '1h',
     })
     const resetPasswordLink = `${req.protocol}://${req.headers.host}/auth/reset/${token}` // ^ front end url 
     console.log(resetPasswordLink);
@@ -237,7 +239,7 @@ export const loginWithGmail = async (req, res, next) => {
           role: user.role,
         },
         signature: process.env.SIGN_IN_TOKEN_SECRET,
-        // expiresIn: '1h',
+        expiresIn: '1h',
       })
   
       const userUpdated = await userModel.findOneAndUpdate(
@@ -271,7 +273,7 @@ export const loginWithGmail = async (req, res, next) => {
         role: newUser.role,
       },
       signature: process.env.SIGN_IN_TOKEN_SECRET,
-      // expiresIn: '1h',
+      expiresIn: '1h',
     })
     newUser.token = token
     newUser.status = 'online'
@@ -358,11 +360,83 @@ export const loginWithGmail = async (req, res, next) => {
 export const getUsers = catchError(async (req, res,next) => {
 
   const user = await userModel.find()
-  .select(`email username phoneNumber totalDesignsAvailable status`)
+  .select(`email username phoneNumber totalDesignsAvailable status createdAt`)
   .populate({
     path: 'paymentHistory',
-    select: 'planId designsCount createdAt transactionId amount status',
+    select: 'planId designsCount createdAt transactionId amount status currency',
   })
 
   return res.status(200).json({ message:"Users:" , user })
+})
+
+
+export const deleteUser = catchError(async (req, res,next) => {
+  const { id } = req.params
+  
+  const paymentHistory = await paymentModel.find({ userId: id })
+  if (paymentHistory.length > 0) {
+    await paymentModel.deleteMany({ userId: id })
+  }
+  const designs = await DesignModel.find({ userId: id })
+  
+  // Delete all images associated with the user's designs
+  for (const design of designs) {
+    try {
+      // Delete the original uploaded image
+      if (design.uploadedImage && design.uploadedImage.public_id) {
+        await destroyImage(design.uploadedImage.public_id);
+        console.log(`Deleted original image with ID: ${design.uploadedImage.public_id}`);
+      }
+
+      // Delete all generated images
+      if (design.generatedImage && design.generatedImage.length > 0) {
+        for (const image of design.generatedImage) {
+          if (image.public_id) {
+            await destroyImage(image.public_id);
+            console.log(`Deleted generated image with ID: ${image.public_id}`);
+          }
+        }
+      }
+    } catch (error) {
+      console.error(`Error deleting images for design ${design._id}:`, error);
+    }
+  }
+
+  // Delete all designs
+  if (designs.length > 0) {
+    await DesignModel.deleteMany({ userId: id });
+  }
+
+
+  const user = await userModel.findByIdAndDelete(id)
+  if(!user){
+    return next(new CustomError('user not found',404))
+  }
+  return res.status(200).json({message:'user deleted'})
+})
+
+export const addCredit = catchError(async (req, res,next) => {
+  const { id } = req.params
+  const { amount } = req.body
+  const user = await userModel.findByIdAndUpdate(id, {
+    $inc: { totalDesignsAvailable: amount },
+  })
+  if(!user){
+    return next(new CustomError('user not found',404))
+  }
+  return res.status(200).json({message:'credit added'})
+})
+
+
+export const getSingleUser = catchError(async (req, res,next) => {
+  const { id } = req.params
+  const user = await userModel.findById(id)
+  .populate({
+    path: 'paymentHistory'
+  })
+
+  if(!user){
+    return next(new CustomError('user not found',404))
+  }
+  return res.status(200).json({message:'user',user})
 })

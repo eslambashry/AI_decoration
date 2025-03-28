@@ -7,8 +7,16 @@ const designSchema = new mongoose.Schema({
     public_id: String
   },
   generatedImage:[{
-    type: String,required: true
+    secure_url: {
+      type: String,
+      required: true,
+    },
+    public_id: {
+      type: String,
+      required: true,
+    },
   }],
+  
   roomType: { 
     type: String, 
     enum: [

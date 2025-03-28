@@ -31,7 +31,7 @@ export const createWithImage = catchError(async (req, res, next) => {
 
     const customId = nanoid();
     // console.log(req.file);
-    
+ 
     const uploadResult = await imagekit.upload({
       file: req.file.buffer,
       fileName: req.file.originalname,
@@ -95,7 +95,11 @@ export const createWithImage = catchError(async (req, res, next) => {
           return next(new CustomError('Generated image upload failed. Please try again.', 500));
         }
   
-        uploadedGeneratedImages.push(generatedImageUpload.url);
+
+        uploadedGeneratedImages.push({
+          secure_url: generatedImageUpload.url,
+          public_id: generatedImageUpload.fileId
+        });
       }
     
     
