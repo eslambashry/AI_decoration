@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import { type } from 'os'
 const { Schema } = mongoose
 
 const paymentSchema = new Schema({
@@ -34,6 +35,10 @@ const paymentSchema = new Schema({
     default: 'pending'
   },
   designsCount: {
+    type: Number,
+    required: true
+  },
+  storageMonths:{
     type: Number,
     required: true
   }

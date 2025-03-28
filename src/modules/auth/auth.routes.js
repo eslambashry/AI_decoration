@@ -19,4 +19,9 @@ router.post('/resetPassword/:token',authCont.resetPassword)
 
 //  ! ============================ for dasboard ============================
 router.get('/getUsers', authCont.getUsers)
+router.delete('/deleteUser/:id', authCont.deleteUser)
+router.post('/updateUser/:id', authCont.addCredit)
+router.get('/getSingle/:id', authCont.getSingleUser)
+
+
 export default router

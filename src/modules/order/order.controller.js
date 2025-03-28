@@ -166,7 +166,8 @@ export const handlePaymentSuccess = catchError(async (req, res, next) => {
     transactionId: session_id,
     paymentMethod: 'stripe',
     status: 'completed',
-    designsCount: planDetails.maxDesigns
+    designsCount: planDetails.maxDesigns,
+    storageMonths: planDetails.storageMonths,
   });
   
   // Save the payment document
