@@ -79,9 +79,9 @@ export const processPayment = catchError(async (req, res, next) => {
   }
 
   // Ensure directory exists
-  if (!fs.existsSync('./Files')) {
-    fs.mkdirSync('./Files', { recursive: true });
-  }
+  // if (!fs.existsSync('./Files')) {
+  //   fs.mkdirSync('./Files', { recursive: true });
+  // }
 
   const user = await userModel.findById(req.authUser._id);
   if (!user) {
@@ -186,6 +186,8 @@ export const handlePaymentSuccess = catchError(async (req, res, next) => {
   // Update the user document
   await user.save();
 
+
+  
   // Generate invoice
   const invoiceData = {
     orderCode,
@@ -211,9 +213,15 @@ export const handlePaymentSuccess = catchError(async (req, res, next) => {
   };
 
   // const invoicePath = createInvoice(invoiceData, `${orderCode}_invoice.pdf`);
-  const invoiceBuffer = await createInvoice(invoiceData, `${orderCode}_invoice.pdf`);
+  const invoiceBuffer = await createInvoice(invoiceData);
 
   // Send email with invoice
+  // const emailContent = emailTemplate({
+  //   link: `${req.protocol}://${req.headers.host}/dashboard`,
+  //   linkData: 'View Your Dashboard',
+  //   subject: 'Payment Confirmation - DecorAI'
+  // });
+
   const emailContent = emailTemplate({
     link: `${req.protocol}://${req.headers.host}/dashboard`,
     linkData: 'View Your Dashboard',
@@ -227,7 +235,7 @@ export const handlePaymentSuccess = catchError(async (req, res, next) => {
     attachments: [
       {
         filename: `invoice_${orderCode}.pdf`,
-        path: invoiceBuffer,
+        content: invoiceBuffer, // Use the buffer directly
         contentType: 'application/pdf'
       }
     ]

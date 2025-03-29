@@ -1,7 +1,6 @@
 import PDFDocument from 'pdfkit'
-import { Buffer } from 'buffer'
 
-function createInvoice(invoice, pathVar) {
+function createInvoice(invoice) {
   return new Promise((resolve, reject) => {
     try {
       // Create a buffer to store the PDF instead of writing to filesystem
@@ -9,7 +8,7 @@ function createInvoice(invoice, pathVar) {
       let doc = new PDFDocument({ size: 'A4', margin: 50 });
       
       // Collect PDF data chunks
-      doc.on('data', buffers.push.bind(buffers));
+      doc.on('data', (chunk) => buffers.push(chunk));
       
       // Resolve with the complete PDF buffer when done
       doc.on('end', () => {
@@ -28,6 +27,7 @@ function createInvoice(invoice, pathVar) {
     }
   });
 }
+
 
 function generateHeader(doc) {
   doc
