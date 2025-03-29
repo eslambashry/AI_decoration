@@ -1,19 +1,32 @@
-import fs from 'fs'
 import PDFDocument from 'pdfkit'
-import path from 'path'
+import { Buffer } from 'buffer'
 
 function createInvoice(invoice, pathVar) {
-  let doc = new PDFDocument({ size: 'A4', margin: 50 })
+  return new Promise((resolve, reject) => {
+    try {
+      // Create a buffer to store the PDF instead of writing to filesystem
+      const buffers = [];
+      let doc = new PDFDocument({ size: 'A4', margin: 50 });
+      
+      // Collect PDF data chunks
+      doc.on('data', buffers.push.bind(buffers));
+      
+      // Resolve with the complete PDF buffer when done
+      doc.on('end', () => {
+        const pdfData = Buffer.concat(buffers);
+        resolve(pdfData);
+      });
 
-  generateHeader(doc)
-  generateCustomerInformation(doc, invoice)
-  generateInvoiceTable(doc, invoice)
-  generateFooter(doc)
+      generateHeader(doc);
+      generateCustomerInformation(doc, invoice);
+      generateInvoiceTable(doc, invoice);
+      generateFooter(doc);
 
-  doc.end()
-  doc.pipe(fs.createWriteStream(path.resolve(`./Files/${pathVar}`)))
-  
-  // return path.resolve(`./Files/${pathVar}`)
+      doc.end();
+    } catch (error) {
+      reject(error);
+    }
+  });
 }
 
 function generateHeader(doc) {
