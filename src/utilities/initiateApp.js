@@ -127,6 +127,7 @@ app.get('/', (req,res)=>res.send(
         <div class="route-item">updateUser/:id => <span>POST</span> => /auth/updateUser/:id</div>
         <div class="route-item">deleteUser/:id => <span>DELETE</span> => /auth/deleteUser/:id</div>
         <div class="route-item get-route"><a href="/auth/getUsers" id="auth-getUsers">getUsers => <span>GET</span> => /auth/getUsers</a></div>
+        <div class="route-item get-route"><a href="/auth/getSingle/:id" id="auth-getUsers">getSingle => <span>GET</span> => /auth/getSingle/:id</a></div>
         </div>
 
     <h3>/payment</h3>

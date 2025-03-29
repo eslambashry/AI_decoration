@@ -14,7 +14,7 @@ export const emailTemplate = ({ link, linkData, subject }) => {
     <tr>
     <td>
     <h1>
-        <img width="100px" src="https://res.cloudinary.com/ddajommsw/image/upload/v1670702280/Group_35052_icaysu.png"/>
+        <img width="100px" src="https://ik.imagekit.io/xztnqpqpz/Roomo/Blogs/2vn3b/logo_1ZxKJpMde.PNG"/>
     </h1>
     </td>
     <td>
