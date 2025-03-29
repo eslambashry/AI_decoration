@@ -7,7 +7,7 @@ import createInvoice from "../../utilities/pdfbody.js";
 import { userModel } from "../../../Database/models/user.model.js";
 import { nanoid } from 'nanoid';
 import { Payment } from "../../../Database/models/payment.model.js";
-import slugify from 'slugify'; // You'll need to install this: npm install slugify
+import slugify from 'slugify'; 
 
 import fs from 'fs';
 
