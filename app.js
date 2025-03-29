@@ -16,6 +16,5 @@ cleanupExpiredDesignsCron()
 // TODO Update User                           (✔️)
 
 // TODO add admin account and make auth middleware 👀...
-// TODO "ENOENT: no such file or directory, open 'logo.png'"
-// TODO generate-image has problem
- 
+// TODO "ENOENT: no such file or directory, open 'logo.png'" (✔️)
+// TODO generate-image has problem (✔️)

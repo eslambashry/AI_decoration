@@ -18,7 +18,7 @@ function createInvoice(invoice, pathVar) {
 
 function generateHeader(doc) {
   doc
-    .image('logo.png', 50, 45, { width: 100 })
+    .image('https://ik.imagekit.io/xztnqpqpz/Roomo/Blogs/2vn3b/logo_1ZxKJpMde.PNG', 50, 45, { width: 100 })
     .fillColor('#444444')
     .fontSize(20)
     .fillColor('#09c')

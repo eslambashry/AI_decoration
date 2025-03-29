@@ -11,6 +11,7 @@ import pkg from 'bcrypt'
 import jwt from "jsonwebtoken";
 import { DesignModel } from "../../../Database/models/generate_designs_for_room.model.js"
 import { destroyImage } from "../../utilities/imageKitConfigration.js"
+import { Payment } from "../../../Database/models/payment.model.js"
 
 export const signup = async(req,res,next) => {
     const { 
@@ -373,9 +374,9 @@ export const getUsers = catchError(async (req, res,next) => {
 export const deleteUser = catchError(async (req, res,next) => {
   const { id } = req.params
   
-  const paymentHistory = await paymentModel.find({ userId: id })
+  const paymentHistory = await Payment.find({ userId: id })
   if (paymentHistory.length > 0) {
-    await paymentModel.deleteMany({ userId: id })
+    await Payment.deleteMany({ userId: id })
   }
   const designs = await DesignModel.find({ userId: id })
   
