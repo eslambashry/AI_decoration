@@ -1,9 +1,8 @@
 import fs from 'fs'
 import PDFDocument from 'pdfkit'
 import path from 'path'
-import { promises as fsPromises } from 'fs'
 
-async function createInvoice(invoice, pathVar) {
+function createInvoice(invoice, pathVar) {
   let doc = new PDFDocument({ size: 'A4', margin: 50 })
 
   generateHeader(doc)
@@ -11,49 +10,11 @@ async function createInvoice(invoice, pathVar) {
   generateInvoiceTable(doc, invoice)
   generateFooter(doc)
 
-  // Try multiple possible writable directories
-  const possibleDirs = [
-    './Files',
-    '/tmp',
-    path.join(process.cwd(), 'Files'),
-    path.join(process.cwd(), 'tmp')
-  ];
+  doc.end()
+  doc.pipe(fs.createWriteStream(path.resolve(`./Files/${pathVar}`)))
   
-  let filePath;
-  let success = false;
-  
-  for (const dir of possibleDirs) {
-    try {
-      // Try to create the directory if it doesn't exist
-      await fsPromises.mkdir(dir, { recursive: true }).catch(() => {});
-      
-      // Test if we can write to this directory
-      const testFile = path.join(dir, '.write-test');
-      await fsPromises.writeFile(testFile, 'test').catch(() => {
-        throw new Error('Cannot write to directory');
-      });
-      await fsPromises.unlink(testFile).catch(() => {});
-      
-      // If we get here, we can write to this directory
-      filePath = path.join(dir, pathVar);
-      success = true;
-      break;
-    } catch (error) {
-      console.log(`Cannot use directory ${dir}: ${error.message}`);
-      continue;
-    }
-  }
-  
-  if (!success) {
-    throw new Error('Could not find a writable directory for PDF generation');
-  }
-  
-  doc.end();
-  doc.pipe(fs.createWriteStream(filePath));
-  
-  return filePath;
+  // return path.resolve(`./Files/${pathVar}`)
 }
-
 
 function generateHeader(doc) {
   doc
