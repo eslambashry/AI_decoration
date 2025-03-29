@@ -7,6 +7,7 @@ import createInvoice from "../../utilities/pdfbody.js";
 import { userModel } from "../../../Database/models/user.model.js";
 import { nanoid } from 'nanoid';
 import { Payment } from "../../../Database/models/payment.model.js";
+import slugify from 'slugify'; // You'll need to install this: npm install slugify
 
 import fs from 'fs';
 
@@ -86,9 +87,15 @@ export const processPayment = catchError(async (req, res, next) => {
   if (!user) {
     return next(new CustomError('User not found', 404));
   }
-
-  const orderCode = `${user.username}_${nanoid(3)}`
   
+
+  const slugifiedUsername = slugify(user.username, {
+    lower: true,      // Convert to lowercase
+    strict: true,     // Strip special characters
+    replacement: '-'  // Replace spaces with hyphens
+  });
+  
+  const orderCode = `${slugifiedUsername}_${nanoid(3)}`;  
   // Get price for selected currency
   const amount = planDetails.prices[currency];
   
