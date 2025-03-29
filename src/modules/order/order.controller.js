@@ -13,7 +13,7 @@ import fs from 'fs';
 
 export const paymentPlans = {
   PLAN_1: {
-    name: 'Trial - تجربة',
+    name: 'Trial',
     maxDesigns: 5, // 3 designs + 2 designs free
     prices: {
       USD: 9.06,
@@ -30,7 +30,7 @@ export const paymentPlans = {
     storageMonths: 3
   },
   PLAN_2: {
-    name: 'Basic - الباقة الاساسية',
+    name: 'Basic',
     maxDesigns: 30, // 25 designs + 5 designs free
     prices: {
       USD: 26.66,
@@ -47,7 +47,7 @@ export const paymentPlans = {
     storageMonths: 6
   },
   PLAN_3: {
-    name: 'Pro - باقة برو',
+    name: 'Pro',
     maxDesigns: 50, // 40 designs + 10 designs free
     prices: {
       USD: 37.33,
@@ -210,8 +210,9 @@ export const handlePaymentSuccess = catchError(async (req, res, next) => {
     currency
   };
 
-  const invoicePath = createInvoice(invoiceData, `${orderCode}_invoice.pdf`);
-  
+  // const invoicePath = createInvoice(invoiceData, `${orderCode}_invoice.pdf`);
+  const invoiceBuffer = await createInvoice(invoiceData, `${orderCode}_invoice.pdf`);
+
   // Send email with invoice
   const emailContent = emailTemplate({
     link: `${req.protocol}://${req.headers.host}/dashboard`,
@@ -226,7 +227,8 @@ export const handlePaymentSuccess = catchError(async (req, res, next) => {
     attachments: [
       {
         filename: `invoice_${orderCode}.pdf`,
-        path: invoicePath
+        path: invoiceBuffer,
+        contentType: 'application/pdf'
       }
     ]
   });
