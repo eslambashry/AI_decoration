@@ -10,10 +10,20 @@ function createInvoice(invoice, pathVar) {
   generateInvoiceTable(doc, invoice)
   generateFooter(doc)
 
-  doc.end()
-  doc.pipe(fs.createWriteStream(path.resolve(`./Files/${pathVar}`)))
+  // Check if running in Lambda environment
+  const outputDir = process.env.AWS_LAMBDA_FUNCTION_NAME ? '/tmp' : './Files'
   
-  return path.resolve(`./Files/${pathVar}`)
+  // Create directory if it doesn't exist
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+  }
+  
+  const filePath = path.join(outputDir, pathVar);
+  
+  doc.end()
+  doc.pipe(fs.createWriteStream(filePath))
+  
+  return filePath
 }
 
 function generateHeader(doc) {
