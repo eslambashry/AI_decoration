@@ -1,24 +1,43 @@
 import fs from 'fs'
 import PDFDocument from 'pdfkit'
 import path from 'path'
+import axios from 'axios' // You'll need to install this: npm install axios
 
-function createInvoice(invoice, pathVar) {
+async function createInvoice(invoice, pathVar) {
   let doc = new PDFDocument({ size: 'A4', margin: 50 })
 
-  generateHeader(doc)
+  // Create the directory if it doesn't exist
+  const dirPath = path.resolve('./Files');
+  if (!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath, { recursive: true });
+  }
+
+  await generateHeader(doc)
   generateCustomerInformation(doc, invoice)
   generateInvoiceTable(doc, invoice)
   generateFooter(doc)
 
   doc.end()
   doc.pipe(fs.createWriteStream(path.resolve(`./Files/${pathVar}`)))
-  
+ 
   return path.resolve(`./Files/${pathVar}`)
 }
 
-function generateHeader(doc) {
+async function generateHeader(doc) {
+  try {
+    // Fetch the image from the URL
+    const response = await axios.get('https://ik.imagekit.io/xztnqpqpz/Roomo/Blogs/2vn3b/logo_1ZxKJpMde.PNG', {
+      responseType: 'arraybuffer'
+    });
+    
+    // Use the image data directly
+    doc.image(response.data, 50, 45, { width: 100 });
+  } catch (error) {
+    console.error('Error loading logo:', error);
+    // Continue without the logo if there's an error
+  }
+
   doc
-    .image('https://ik.imagekit.io/xztnqpqpz/Roomo/Blogs/2vn3b/logo_1ZxKJpMde.PNG', 50, 45, { width: 100 })
     .fillColor('#444444')
     .fontSize(20)
     .fillColor('#09c')
@@ -30,7 +49,6 @@ function generateHeader(doc) {
     .text('United Arab Emirates', 200, 110, { align: 'right' })
     .moveDown()
 }
-
 
 function generateCustomerInformation(doc, invoice) {
   doc.fillColor('#444444').fontSize(20).text('Invoice', 50, 160)
