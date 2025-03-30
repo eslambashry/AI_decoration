@@ -1,3 +1,4 @@
+import axios from 'axios';
 import PDFDocument from 'pdfkit'
 
 function createInvoice(invoice) {
@@ -16,22 +17,34 @@ function createInvoice(invoice) {
         resolve(pdfData);
       });
 
-      generateHeader(doc);
-      generateCustomerInformation(doc, invoice);
-      generateInvoiceTable(doc, invoice);
-      generateFooter(doc);
+ // Image URL
+ const logoUrl = 'https://ik.imagekit.io/xztnqpqpz/Roomo/Blogs/2vn3b/logo_1ZxKJpMde.PNG';
 
-      doc.end();
+ // Fetch image as a buffer using axios
+ axios.get(logoUrl, { responseType: 'arraybuffer' })
+   .then(response => {
+     // Pass the image buffer to PDFKit
+     const logoBuffer = Buffer.from(response.data);
+     generateHeader(doc, logoBuffer);
+     generateCustomerInformation(doc, invoice);
+     generateInvoiceTable(doc, invoice);
+     generateFooter(doc);
+     doc.end();
+   })
+   .catch(error => {
+     reject(error);
+   });
     } catch (error) {
       reject(error);
     }
   });
 }
 
+function generateHeader(doc,logoBuffer) {
 
-function generateHeader(doc) {
+  doc.image(logoBuffer, 50, 65, { width: 100 })
+
   doc
-    // .image('https://ik.imagekit.io/xztnqpqpz/Roomo/Blogs/2vn3b/logo_1ZxKJpMde.PNG', 50, 45, { width: 50 })
     .fillColor('#444444')
     .fontSize(20)
     .fillColor('#09c')
@@ -86,9 +99,9 @@ function generateInvoiceTable(doc, invoice) {
   generateTableRow(
     doc,
     invoiceTableTop,
-    'Designs',
-    'Unit Cost',
     'Plan',
+    'Plan Price',
+    'Designs',
     'Line Total',
   )
   generateHr(doc, invoiceTableTop + 20)
@@ -100,9 +113,9 @@ function generateInvoiceTable(doc, invoice) {
     generateTableRow(
       doc,
       position,
-      item.title, // product title
+      item.title, // product quantity
       formatCurrency(item.price, invoice.currency),
-      item.quantity, // product quantity
+      item.description, // description
       formatCurrency(item.finalPrice, invoice.currency)
     )
 
@@ -158,7 +171,7 @@ function generateTableRow(
     .fontSize(10)
     .text(item, 50, y)
     .text(description, 150, y)
-    .text(unitCost, 280, y, { width: 90, align: 'right' })
+    .text(unitCost, 280, y)
     .text(quantity, 370, y, { width: 90, align: 'right' })
     .text(lineTotal, 0, y, { align: 'right' })
 }
@@ -179,7 +192,7 @@ function formatCurrency(amount, currencyCode) {
   
   // If the symbol is at the beginning (like $)
   if (['$', 'SAR', 'AED'].includes(symbol)) {
-    return symbol + amount;
+    return symbol +' '+ amount;
   }
   
   // If the symbol is at the end (like SAR)
