@@ -80,9 +80,9 @@ export const processPayment = catchError(async (req, res, next) => {
   }
 
   // Ensure directory exists
-  if (!fs.existsSync('./Files')) {
-    fs.mkdirSync('./Files', { recursive: true });
-  }
+  // if (!fs.existsSync('./Files')) {
+  //   fs.mkdirSync('./Files', { recursive: true });
+  // }
 
   const user = await userModel.findById(req.authUser._id);
   if (!user) {
