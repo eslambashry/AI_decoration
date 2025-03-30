@@ -40,6 +40,9 @@ function createInvoice(invoice) {
   });
 }
 
+
+
+
 function generateHeader(doc,logoBuffer) {
 
   doc.image(logoBuffer, 50, 65, { width: 100 })
