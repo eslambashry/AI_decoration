@@ -31,6 +31,7 @@ function createInvoice(invoice) {
 
 function generateHeader(doc) {
   doc
+    // .image('https://ik.imagekit.io/xztnqpqpz/Roomo/Blogs/2vn3b/logo_1ZxKJpMde.PNG', 50, 45, { width: 50 })
     .fillColor('#444444')
     .fontSize(20)
     .fillColor('#09c')

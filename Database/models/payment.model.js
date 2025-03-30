@@ -1,5 +1,4 @@
 import mongoose from 'mongoose'
-import { type } from 'os'
 const { Schema } = mongoose
 
 const paymentSchema = new Schema({
@@ -41,7 +40,17 @@ const paymentSchema = new Schema({
   storageMonths:{
     type: Number,
     required: true
+  },
+  pdfUrl:{
+    secure_url: {
+    type: String,
+    required: true
+  },
+  public_id: {
+    type: String,
+    required: true
   }
+}
 }, { timestamps: true })
 
 export const Payment = mongoose.model('Payment', paymentSchema)

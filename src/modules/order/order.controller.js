@@ -10,6 +10,7 @@ import { Payment } from "../../../Database/models/payment.model.js";
 import slugify from 'slugify'; 
 
 import fs from 'fs';
+import { uploadToImageKit } from "../../utilities/imageKitConfigration.js";
 
 export const paymentPlans = {
   PLAN_1: {
@@ -79,9 +80,9 @@ export const processPayment = catchError(async (req, res, next) => {
   }
 
   // Ensure directory exists
-  // if (!fs.existsSync('./Files')) {
-  //   fs.mkdirSync('./Files', { recursive: true });
-  // }
+  if (!fs.existsSync('./Files')) {
+    fs.mkdirSync('./Files', { recursive: true });
+  }
 
   const user = await userModel.findById(req.authUser._id);
   if (!user) {
@@ -164,30 +165,8 @@ export const handlePaymentSuccess = catchError(async (req, res, next) => {
 
   user.totalDesignsAvailable += planDetails.maxDesigns;
   
-  // Create a new Payment document
-  const payment = new Payment({
-    userId: user._id,
-    planId,
-    currency,
-    amount: planDetails.prices[currency],
-    transactionId: session_id,
-    paymentMethod: 'stripe',
-    status: 'completed',
-    designsCount: planDetails.maxDesigns,
-    storageMonths: planDetails.storageMonths,
-  });
-  
-  // Save the payment document
-  await payment.save();
-  
-  // Add the new payment to the paymentHistory array in the User document
-  user.paymentHistory.push(payment._id);
-
-  // Update the user document
-  await user.save();
 
 
-  
   // Generate invoice
   const invoiceData = {
     orderCode,
@@ -202,6 +181,7 @@ export const handlePaymentSuccess = catchError(async (req, res, next) => {
     items: [
       {
         title: planDetails.name,
+        description: planDetails.description,
         price: planDetails.prices[currency],
         quantity: 1,
         finalPrice: planDetails.prices[currency]
@@ -213,18 +193,21 @@ export const handlePaymentSuccess = catchError(async (req, res, next) => {
   };
 
   // const invoicePath = createInvoice(invoiceData, `${orderCode}_invoice.pdf`);
-  const invoiceBuffer = await createInvoice(invoiceData);
+  
+     // Generate invoice (ensure it returns a Buffer, not a file path)
+     const invoiceBuffer = await createInvoice(invoiceData, `${orderCode}_invoice.pdf`); // Await here to get the actual PDF Buffer
+
+     // Upload the PDF to ImageKit
+     const uploadedFile = await uploadToImageKit(invoiceBuffer, `${orderCode}_invoice.pdf`);
+     console.log(uploadedFile);
+     // The uploaded file URL (public URL)
+     const pdfUrl = uploadedFile.url;
+// console.log(pdfUrl);
 
   // Send email with invoice
-  // const emailContent = emailTemplate({
-  //   link: `${req.protocol}://${req.headers.host}/dashboard`,
-  //   linkData: 'View Your Dashboard',
-  //   subject: 'Payment Confirmation - DecorAI'
-  // });
-
   const emailContent = emailTemplate({
-    link: `${req.protocol}://${req.headers.host}/dashboard`,
-    linkData: 'View Your Dashboard',
+    link: `${pdfUrl}`,
+    linkData: 'View Invoice',
     subject: 'Payment Confirmation - DecorAI'
   });
 
@@ -235,18 +218,46 @@ export const handlePaymentSuccess = catchError(async (req, res, next) => {
     attachments: [
       {
         filename: `invoice_${orderCode}.pdf`,
-        content: invoiceBuffer, // Use the buffer directly
-        contentType: 'application/pdf'
+        path: pdfUrl // The URL of the uploaded PDF on ImageKit
       }
     ]
   });
 
+
+    // Create a new Payment document
+    const payment = new Payment({
+      userId: user._id,
+      planId,
+      currency,
+      amount: planDetails.prices[currency],
+      transactionId: session_id,
+      paymentMethod: 'stripe',
+      status: 'completed',
+      designsCount: planDetails.maxDesigns,
+      storageMonths: planDetails.storageMonths,
+      pdfUrl: {
+        secure_url: uploadedFile.url,
+        public_id: uploadedFile.fileId,
+      },
+    });
+    
+    // Save the payment document
+    await payment.save();
+    
+    // Add the new payment to the paymentHistory array in the User document
+    user.paymentHistory.push(payment._id);
+  
+    // Update the user document
+    await user.save();
+
+    
   return res.status(200).json({
     success: true,
     message: 'Payment processed successfully',
     user: {
       email: user.email,
-      totalDesignsAvailable: user.totalDesignsAvailable
+      totalDesignsAvailable: user.totalDesignsAvailable,
+      pdfUrl: pdfUrl
     }
   });
 });
