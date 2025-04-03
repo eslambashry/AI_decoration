@@ -47,4 +47,18 @@ export const uploadToImageKit = async (fileBuffer, fileName) => {
         throw new Error('Failed to upload PDF to ImageKit');
     }
 };
+
+
+
+export const deleteFromImageKit = async (fileId) => {
+  try {
+    // Delete the file from ImageKit using the file ID
+    const result = await imagekit.deleteFile(fileId);
+    
+    return result; // Returns success response
+  } catch (error) {
+    console.error('Error deleting PDF from ImageKit:', error);
+    throw new Error('Failed to delete PDF from ImageKit');
+  }
+};
 export default imagekit;

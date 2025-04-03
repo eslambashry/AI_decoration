@@ -1,5 +1,5 @@
 import CustomError from "../../utilities/customError.js";
-import { initializePayment, verifyPayment } from "../../utilities/payment.js";
+import { calculatePaymentMetrics, getAccountBalance, initializePayment, verifyPayment } from "../../utilities/payment.js";
 import { sendEmailService } from "../../services/sendEmail.js";
 import { emailTemplate } from "../../utilities/emailTemplate.js";
 import catchError from "../../middleware/ErrorHandeling.js";
@@ -268,4 +268,43 @@ export const handlePaymentCancel = catchError(async (req, res, next) => {
     success: false,
     message: 'Payment was cancelled'
   });
+});
+
+
+export const getDashboardData = catchError(async (req, res, next) => {
+    try {
+        // Extract query parameters
+        const { startDate, endDate } = req.query;
+
+        // Convert dates to timestamps if provided
+        const parsedStartDate = startDate ? new Date(startDate).getTime() : null;
+        const parsedEndDate = endDate ? new Date(endDate).getTime() : null;
+
+        // Fetch account balance
+        const balance = await getAccountBalance();
+
+        // Calculate payment metrics
+        const paymentMetrics = await calculatePaymentMetrics({
+            startDate: parsedStartDate,
+            endDate: parsedEndDate,
+        });
+
+        // Combine all data into a single response
+        return res.status(200).json({
+            success: true,
+            message: 'Dashboard data fetched successfully',
+            data: {
+                balance: {
+                    available: balance.availableBalance,
+                    pending: balance.pendingBalance,
+                },
+                payments: {
+                    groupedPayments: paymentMetrics.groupedPayments,
+                    totalPaymentsInUSD: paymentMetrics.totalPaymentsInUSD,
+                },
+            },
+        });
+    } catch (error) {
+        return next(new CustomError('Failed to fetch dashboard data', 500));
+    }
 });

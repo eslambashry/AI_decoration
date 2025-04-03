@@ -28,6 +28,8 @@ export const cleanupExpiredDesignsCron = () => {
                     const user = await userModel.findById(payment.userId);
                     
                     if (user) {
+                        console.log("user corn",user);
+                        
                         try {
                             // Find designs created by this user during the period covered by this payment
                             const paymentDate = moment(payment.createdAt);

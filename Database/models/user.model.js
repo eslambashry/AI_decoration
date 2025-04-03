@@ -1,6 +1,5 @@
 import { Schema,model } from "mongoose"
-import { systemRoles } from "../../src/utilities/systemRole.js"
-
+ 
 const userSchema = new Schema({
 
     username:{
@@ -29,10 +28,6 @@ const userSchema = new Schema({
     phoneNumber:{
         type:String,
     },
-    address:[{
-        type:String,
-        required:true,
-    }],
     profilePicture:{
         secure_url:String,
         public_id:String,
@@ -41,11 +36,6 @@ const userSchema = new Schema({
         type:String,
         default:'offline',
         enum:['offline','online'],
-    },
-    gender:{
-        type:String,
-        default:'not specified',
-        enum:['male','female','not specified']
     },
     provider: {
         type: String,
@@ -61,7 +51,6 @@ const userSchema = new Schema({
         type: Number,
         default: 0
       },
-    age:Number,
     token:String,
     forgetCode:String,
 },{timestamps:true})
