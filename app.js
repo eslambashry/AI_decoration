@@ -15,6 +15,8 @@ cleanupExpiredDesignsCron()
 // TODO Blogs AR,EN          hosni            (✔️)
 // TODO Update User                           (✔️)
 
-// TODO add admin account and make auth middleware 👀...
+// TODO add admin account and make auth middleware 👀... (✔️)
 // TODO "ENOENT: no such file or directory, open 'logo.png'" (✔️)
 // TODO generate-image has problem (✔️)
+
+// TODO Send Email service 

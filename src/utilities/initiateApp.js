@@ -121,19 +121,19 @@ app.get('/', (req,res)=>res.send(
         <div class="route-item">resetPassword/:token => <span>POST</span> => /auth/resetPassword/:token</div>
         <div class="route-item get-route"><a href="/auth/getOneUser/:id" id="auth-getOneUser">getOneUser => <span>GET</span> => /auth/getOneUser/:id</a></div>
         <div class="route-item">logOut => <span>POST</span> => /auth/logout</div>
-
+        
         <hr/> 
         <div class='dashboard'>* Dasboard *</div>
         <div class="route-item">updateUser/:id => <span>POST</span> => /auth/updateUser/:id</div>
         <div class="route-item">deleteUser/:id => <span>DELETE</span> => /auth/deleteUser/:id</div>
         <div class="route-item get-route"><a href="/auth/getUsers" id="auth-getUsers">getUsers => <span>GET</span> => /auth/getUsers</a></div>
         <div class="route-item get-route"><a href="/auth/getSingle/:id" id="auth-getUsers">getSingle => <span>GET</span> => /auth/getSingle/:id</a></div>
+        <div class="route-item">getDashboardData => <span>GET</span> => /payment/dashboard/getPaymentsData</div>
         </div>
 
     <h3>/payment</h3>
     <div class="route-list">
         <div class="route-item">payment => <span>POST</span> => /payment/payment</div>
-        <div class="route-item get-route"><a href="/payment/payment-history" id="payment-history">payment-history => <span>GET</span> => /payment/payment-history</a></div>
     </div>
 
     <h3>/decoration</h3>
@@ -141,6 +141,7 @@ app.get('/', (req,res)=>res.send(
         <div class="route-item">createWithImage => <span>POST</span> => /decoration/createWithImage</div>
         <div class="route-item">createwithoutImage => <span>POST</span> => /decoration/createwithoutImage</div>
         <div class="route-item get-route"><a href="/decoration/getDesignByUserId" id="decoration-design">getDesignByUserId => <span>GET</span> => /decoration/getDesignByUserId</a></div>
+
     </div>
 
     <h3>/blog</h3>
