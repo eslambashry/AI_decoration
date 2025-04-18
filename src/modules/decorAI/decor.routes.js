@@ -13,4 +13,7 @@ router.post('/createWithImage', isAuth([systemRoles.ADMIN, systemRoles.USER]), m
 router.post('/createwithoutImage', isAuth([systemRoles.ADMIN, systemRoles.USER]), decorationCon.createwithoutImage)
 router.get('/getDesignByUserId', isAuth([systemRoles.USER]), decorationCon.getDesignById)
 // router.get('/getDesigns', decorationCon.getDesigns)
+
+router.get('/getallcridets', decorationCon.getCreditBalance)
+
 export default router
