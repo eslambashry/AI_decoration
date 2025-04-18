@@ -105,7 +105,7 @@ export const login = catchError(async(req,res,next) => {
     console.log(userExsist.password);
     
     if(!passwordExsist){
-        return next(new CustomError('in correct password',404))
+        return next(new CustomError('password incorrect',404))
     }
 
     const token = generateToken({
@@ -359,6 +359,8 @@ export const loginWithGmail = async (req, res, next) => {
 // ! =================================== for dashboard =================================
 
 export const getUsers = catchError(async (req, res,next) => {
+
+  // .find({ _id: { $ne: '67f8138e8169a0cffaef6b2c' } }) // Exclude the user
 
   const user = await userModel.find()
   .select(`email username phoneNumber totalDesignsAvailable status createdAt`)

@@ -214,5 +214,28 @@ export const getDesignById = catchError(async (req, res, next) => {
   res.status(200).json({ designs });
 })
 
+export const getCreditBalance = catchError(async (req, res, next) => {
+  try {
+
+
+    const apiToken = process.env.Decoration_AI_TOKEN;
+
+    const response = await axios.get('https://api.decor8.ai/speak_friend_and_enter', {
+      headers: {
+        'Authorization': `Bearer ${apiToken}`,
+        // 'Content-Type': 'application/json',
+      },
+    });
+
+    // res.status(200).json({response})
+    console.log('Your current credit balance:', response);
+  } catch (error) {
+    if (error.response) {
+      console.error('Error:', error.response.status, error.response.data);
+    } else {
+      console.error('Error:', error.message);
+    }
+  }
+})
 
 

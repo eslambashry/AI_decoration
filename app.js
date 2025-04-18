@@ -18,5 +18,12 @@ cleanupExpiredDesignsCron()
 // TODO add admin account and make auth middleware 👀... (✔️)
 // TODO "ENOENT: no such file or directory, open 'logo.png'" (✔️)
 // TODO generate-image has problem (✔️)
+// TODO Send Email service (✔️)
 
-// TODO Send Email service 
+
+
+
+// TODO <div><a href="http://localhost:4200/#/" target="_blank" style="color:white; text-decoration: underline;">View In Website</a></div>
+// TODO Contact Us to: 'eslamhussin600@gmail.com',
+
+
