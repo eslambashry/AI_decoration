@@ -14,7 +14,7 @@ export const createWithImage = catchError(async (req, res, next) => {
     if (!user) {
       return next(new CustomError('User not found.', 404));
     }
-    console.log(req.body);
+    // console.log(req.body);
 
     if (user.totalDesignsAvailable <= 0) {
       return next(new CustomError('No designs available. Please purchase a plan.', 400));
@@ -59,7 +59,7 @@ export const createWithImage = catchError(async (req, res, next) => {
         }
       }
     );
-    console.log(apiResponse);
+    // console.log(apiResponse);
 
     
     // console.log(generatedImages);
@@ -147,7 +147,7 @@ export const createwithoutImage = catchError(async (req,res,next) => {
       return next(new CustomError('No designs available. Please purchase a plan.', 400));
     }
 
-    console.log(req.body);
+    // console.log(req.body);
     // Validate request body
     const { room_type, design_style, num_images } = req.body;
     if (!room_type || !design_style || !num_images) {

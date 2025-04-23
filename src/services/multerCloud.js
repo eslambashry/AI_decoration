@@ -13,7 +13,7 @@ export const multerCloudFunction = (allowedExtensionsArr) => {
     if (allowedExtensionsArr.includes(file.mimetype)) {
       return cb(null, true)
     }
-    cb(new Error('invalid extension', { cause: 400 }), false)
+    cb(new Error('In-valid Image Extension', { cause: 400 }), false)
   }
 
   const fileUpload = multer({

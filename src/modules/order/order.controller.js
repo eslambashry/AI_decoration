@@ -114,7 +114,7 @@ export const processPayment = catchError(async (req, res, next) => {
       quantity: 1,
     },
   ];
-  const baseUrl = `${req.protocol}://${req.headers.host}`;
+  const baseUrl = 'https://roomo.ai';
 
   // Initialize payment with Stripe
   const paymentSession = await initializePayment({
@@ -127,8 +127,8 @@ export const processPayment = catchError(async (req, res, next) => {
       orderCode,
       currency
     },
-    success_url: `${baseUrl}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${baseUrl}/payment/cancel`,
+    success_url: `${baseUrl}/sub-thanks.html?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${baseUrl}`, // Or set this to a real cancel page if you have one
     line_items,
   });
 
@@ -199,7 +199,7 @@ export const handlePaymentSuccess = catchError(async (req, res, next) => {
 
      // Upload the PDF to ImageKit
      const uploadedFile = await uploadToImageKit(invoiceBuffer, `${orderCode}_invoice.pdf`);
-     console.log(uploadedFile);
+    //  console.log(uploadedFile);
      // The uploaded file URL (public URL)
      const pdfUrl = uploadedFile.url;
 // console.log(pdfUrl);
