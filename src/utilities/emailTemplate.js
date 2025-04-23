@@ -64,7 +64,7 @@ export const emailTemplate = ({ link, linkData, subject }) => {
         <div class="email-container">
             <div class="header">
                 <img src="https://ik.imagekit.io/xztnqpqpz/Roomo/Blogs/2vn3b/logo_1ZxKJpMde.PNG" alt="Logo"/>
-                <div><a href="http://localhost:4200/#/" target="_blank" style="color:white; text-decoration: underline;">View In Website</a></div>
+                <div><a href="https://roomo.ai" target="_blank" style="color:white; text-decoration: underline;">View In Website</a></div>
             </div>
             <div class="content">
                 <h1>${subject}</h1>

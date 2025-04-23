@@ -98,11 +98,11 @@ export const login = catchError(async(req,res,next) => {
         return next(new CustomError('user not found',404))
     } 
 
-    console.log(password);
+    // console.log(password);
     
     const passwordExsist = pkg.compareSync(password,userExsist.password)
-    console.log(passwordExsist);
-    console.log(userExsist.password);
+    // console.log(passwordExsist);
+    // console.log(userExsist.password);
     
     if(!passwordExsist){
         return next(new CustomError('password incorrect',404))
@@ -151,8 +151,8 @@ export const forgetPassword = async(req,res,next) => {
         signature: process.env.RESET_TOKEN, // ! process.env.RESET_TOKEN
         expiresIn: '1h',
     })
-    const resetPasswordLink = `${req.protocol}://${req.headers.host}/auth/reset/${token}` // ^ front end url 
-    console.log(resetPasswordLink);
+    const resetPasswordLink = `https://roomo.ai/reset-password.html?token=${token}`
+    // console.log(resetPasswordLink);
     
     const isEmailSent = sendEmailService({
         to:email,
@@ -188,7 +188,7 @@ export const resetPassword = async(req,res,next) => {
     }
     
     const {newPassword} = req.body
-    console.log(newPassword);
+    // console.log(newPassword);
     
     const hashedPassword = pkg.hashSync(newPassword, +process.env.SALT_ROUNDS)
 
@@ -223,9 +223,9 @@ export const loginWithGmail = async (req, res, next) => {
       return payload
     }
     const { email_verified, email, name } = await verify()
-    console.log(email_verified);
-    console.log(email);
-    console.log(name);
+    // console.log(email_verified);
+    // console.log(email);
+    // console.log(name);
     
     if (!email_verified) {
       return next(new CustomError('invalid email', 400 ))
