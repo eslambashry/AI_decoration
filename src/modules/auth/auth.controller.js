@@ -81,7 +81,11 @@ export const confirmEmail = async(req,res,next) => {
         if(!user){
             return res.status(400).json({message:'already confirmed'})
         }
-            return res.status(200).json({message:'confirmed done, now log in'})
+
+        return res.redirect(302, 'https://roomo.ai/email-confirm');
+
+            // return res.status(200).json({message:'confirmed done, now log in'})
+
 }
 
 
@@ -98,6 +102,9 @@ export const login = catchError(async(req,res,next) => {
         return next(new CustomError('user not found',404))
     } 
 
+    if(userExsist.isConfirmed == false){
+      return next(new CustomError('please confirm your email first',404))
+    }
     // console.log(password);
     
     const passwordExsist = pkg.compareSync(password,userExsist.password)
@@ -152,7 +159,7 @@ export const forgetPassword = async(req,res,next) => {
         expiresIn: '1h',
     })
     const resetPasswordLink = `https://roomo.ai/reset-password.html?token=${token}`
-    // console.log(resetPasswordLink);
+    console.log(resetPasswordLink);
     
     const isEmailSent = sendEmailService({
         to:email,
@@ -254,6 +261,8 @@ export const loginWithGmail = async (req, res, next) => {
         },
       )
       return res.status(200).json({ messge: 'Login done', userUpdated, token })
+      //     return res.redirect(`https://roomo.ai?token=${token}`);
+
     }
   
     // signUp
