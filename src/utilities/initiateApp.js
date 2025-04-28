@@ -8,10 +8,13 @@ import cors from 'cors'
 export const initiateApp = (app, express) => {
     const port = process.env.PORT 
 
-    app.use(cors({
-        origin: ['https://roomo.ai'], // السماح فقط لـ roomo.ai
-        credentials: true, // لو بتستخدم كوكيز أو headers مخصصة
-      }));
+    app.use(cors());
+
+
+    // app.use(cors({
+    //     origin: ['https://roomo.ai'], // السماح فقط لـ roomo.ai
+    //     credentials: true, // لو بتستخدم كوكيز أو headers مخصصة
+    //   }));
       
 app.use(express.json())
 DB_connection()

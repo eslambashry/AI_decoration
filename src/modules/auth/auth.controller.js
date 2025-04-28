@@ -222,6 +222,8 @@ export const getAllUser = async(req,res,next) => {
 
 // ! ======================loginWithGmail============================
 export const loginWithGmail = async (req, res, next) => {
+  console.log(req.body);
+console.log("new");
 
     const client = new OAuth2Client()
     const { idToken } = req.body
@@ -266,6 +268,7 @@ export const loginWithGmail = async (req, res, next) => {
           new: true,
         },
       )
+      
       return res.status(200).json({ messge: 'Login done', userUpdated, token })
       //     return res.redirect(`https://roomo.ai?token=${token}`);
 
