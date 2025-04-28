@@ -35,8 +35,9 @@ export const signup = async(req,res,next) => {
     signature: process.env.CONFIRMATION_EMAIL_TOKEN, 
     expiresIn: '1h',
  })
-    const confirmationLink = `${req.protocol}://${req.headers.host}/auth/confirm/${token}` 
-    const isEmailSent = sendEmailService({
+ const confirmationLink = `http://roomo.ai/email-confirm.html?token=${token}`;
+ 
+ const isEmailSent = sendEmailService({
         to:email,
         subject:'Confirmation Email',
          message: //`<a href=${confirmationLink}> Click here to confirm </a>`
@@ -80,13 +81,13 @@ export const confirmEmail = async(req,res,next) => {
         {isConfirmed: true},
         {new:true},
         )
+        
         if(!user){
             return res.status(400).json({message:'already confirmed'})
         }
 
-        return res.redirect(302, 'http://roomo.ai/email-confirm.html');
 
-            // return res.status(200).json({message:'confirmed done, now log in'})
+        return res.status(200).json({message:'confirmed done, now log in'})
 
 }
 
