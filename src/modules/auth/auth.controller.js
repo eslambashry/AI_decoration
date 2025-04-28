@@ -47,6 +47,8 @@ export const signup = async(req,res,next) => {
          })
          ,
     }) 
+    console.log(isEmailSent);
+    
     if(!isEmailSent){
         return res.status(400).json({message:'fail to sent confirmation email'})
     }
@@ -82,7 +84,7 @@ export const confirmEmail = async(req,res,next) => {
             return res.status(400).json({message:'already confirmed'})
         }
 
-        return res.redirect(302, 'https://roomo.ai/email-confirm');
+        return res.redirect(302, 'http://roomo.ai/email-confirm.html');
 
             // return res.status(200).json({message:'confirmed done, now log in'})
 
@@ -203,7 +205,11 @@ export const resetPassword = async(req,res,next) => {
     user.forgetCode = null
 
     const updatedUser = await user.save()
-    res.status(200).json({message: "Done",updatedUser})
+
+    res.redirect(302, 'http://roomo.ai/success-password-reset.html');
+
+    // res.status(200).json({message: "Done",updatedUser})
+
 }
 
 export const getAllUser = async(req,res,next) => {
