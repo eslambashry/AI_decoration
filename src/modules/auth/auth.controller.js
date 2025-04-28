@@ -222,8 +222,6 @@ export const getAllUser = async(req,res,next) => {
 
 // ! ======================loginWithGmail============================
 export const loginWithGmail = async (req, res, next) => {
-  console.log(req.body);
-console.log("new");
 
     const client = new OAuth2Client()
     const { idToken } = req.body
