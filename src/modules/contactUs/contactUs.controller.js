@@ -20,7 +20,7 @@ const submitContactUsForm = async ( req,res,next ) => {
             </div>
             `
         const emailSent = await sendEmailService({
-            to: 'eslamhussin600@gmail.com',
+            to: 'support@roomo.ai',
             subject: `New Contact Us message , User Subject: ${subject}`,
             text: emailMessage,
             from: email,
