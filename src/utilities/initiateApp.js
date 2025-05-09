@@ -1,3 +1,4 @@
+import morgan from 'morgan'
 import { DB_connection } from '../../Database/connection.js'
 import { globalResponse } from '../middleware/ErrorHandeling.js'
 import blogRouter from '../modules/blog/blog.router.js'
@@ -8,15 +9,17 @@ import cors from 'cors'
 export const initiateApp = (app, express) => {
     const port = process.env.PORT 
 
-    // app.use(cors());
+    app.use(cors());
 
 
-    app.use(cors({
-        origin: ['https://roomo.ai'], // السماح فقط لـ roomo.ai
-        credentials: true, // لو بتستخدم كوكيز أو headers مخصصة
-      }));
+    // app.use(cors({
+    //     origin: ['https://roomo.ai'], // السماح فقط لـ roomo.ai
+    //     credentials: true, // لو بتستخدم كوكيز أو headers مخصصة
+    //   }));
+
+      app.use(morgan('dev'));
       
-app.use(express.json())
+      app.use(express.json())
 DB_connection()
 
 app.get('/', (req,res)=>res.send(
