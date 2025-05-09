@@ -9,7 +9,6 @@ import { nanoid } from 'nanoid';
 import { Payment } from "../../../Database/models/payment.model.js";
 import slugify from 'slugify'; 
 
-import fs from 'fs';
 import { uploadToImageKit } from "../../utilities/imageKitConfigration.js";
 
 export const paymentPlans = {
@@ -159,6 +158,8 @@ export const handlePaymentSuccess = catchError(async (req, res, next) => {
 
   // Update user's available designs
   const user = await userModel.findById(userId);
+  console.log(user);
+  
   if (!user) {
     return next(new CustomError('User not found', 404));
   }
@@ -223,7 +224,8 @@ export const handlePaymentSuccess = catchError(async (req, res, next) => {
     ]
   });
 
-
+  console.log(userId, planId, orderCode, currency);
+  
     // Create a new Payment document
     const payment = new Payment({
       userId: user._id,
