@@ -1,6 +1,6 @@
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+const stripe = new Stripe(process.env.STRIPE_LIVE_KEY);
 
 export const initializePayment = async({
     payment_method_types=['card'],
@@ -28,7 +28,7 @@ export const initializePayment = async({
 };
 
 export const verifyPayment = async (sessionId) => {
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+    const stripe = new Stripe(process.env.STRIPE_LIVE_KEY);
     const session = await stripe.checkout.sessions.retrieve(sessionId);
     
     return {
