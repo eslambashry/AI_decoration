@@ -11,3 +11,4 @@ router.get('/cancel', handlePaymentCancel);
 router.get('/dashboard/getPaymentsData', isAuth([systemRoles.ADMIN]), getDashboardData);
 
 export default router;
+   
